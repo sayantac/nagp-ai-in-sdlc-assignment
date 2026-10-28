@@ -1,0 +1,45 @@
+#!/usr/bin/env python3
+"""Git hook: append 'AI-Log-Id: <latest curated entry id>' to commit messages.
+
+Installed by scripts/setup_scaffold.py into .git/hooks/. Skips merge, squash and
+amend commits, and messages that already carry the trailer. Joins an existing
+trailer block (e.g. Claude Code's Co-Authored-By) instead of starting a new one.
+"""
+import json
+import re
+import sys
+from pathlib import Path
+
+TRAILER = re.compile(r"^[A-Za-z][\w-]*: .+")
+message_file = Path(sys.argv[1])
+source = sys.argv[2] if len(sys.argv) > 2 else ""
+if source in ("merge", "squash", "commit"):
+    sys.exit(0)
+text = message_file.read_text(encoding="utf-8")
+if "AI-Log-Id:" in text:
+    sys.exit(0)
+log = Path(__file__).resolve().parents[2] / "ai-logs" / "ai-log.jsonl"
+last_id = None
+if log.exists():
+    for line in log.read_text(encoding="utf-8").splitlines():
+        try:
+            last_id = json.loads(line).get("id") or last_id
+        except json.JSONDecodeError:
+            pass
+if not last_id:
+    sys.exit(0)
+lines = text.split("\n")
+comment_at = next((i for i, line in enumerate(lines) if line.startswith("#")), len(lines))
+body, comments = lines[:comment_at], lines[comment_at:]
+while body and not body[-1].strip():
+    body.pop()
+if not body:
+    sys.exit(0)
+last_paragraph = []
+for line in reversed(body):
+    if not line.strip():
+        break
+    last_paragraph.append(line)
+has_trailer_block = len(last_paragraph) < len(body) and all(TRAILER.match(l) for l in last_paragraph)
+body += ([] if has_trailer_block else [""]) + [f"AI-Log-Id: {last_id}"]
+message_file.write_text("\n".join(body + [""] + comments).rstrip("\n") + "\n", encoding="utf-8")
