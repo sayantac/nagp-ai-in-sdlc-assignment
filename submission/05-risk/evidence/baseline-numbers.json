@@ -1,0 +1,84 @@
+{
+  "source": "ops/pipeline/run-timings.csv",
+  "runs": 20,
+  "window": [
+    "2026-01-19T09:12:00Z",
+    "2026-02-02T15:38:00Z"
+  ],
+  "ci_outcomes": {
+    "all": {
+      "success": 18,
+      "total": 20,
+      "failure_rate_pct": 10.0
+    },
+    "pull_request": {
+      "success": 10,
+      "total": 12,
+      "failure_rate_pct": 16.7
+    },
+    "push_to_main": {
+      "success": 8,
+      "total": 8,
+      "failure_rate_pct": 0.0
+    }
+  },
+  "pipeline_duration": {
+    "n_successful_runs": 18,
+    "median_min": 31.4,
+    "p85_min": 34.5,
+    "min_min": 28.4,
+    "max_min": 35.1
+  },
+  "lead_time_proxy_pr_to_main": {
+    "pairs": [
+      {
+        "branch": "feature/supplier-contacts",
+        "first_pr_run": 1,
+        "merge_push_run": 4,
+        "hours": 70.8
+      },
+      {
+        "branch": "fix/notification-filter",
+        "first_pr_run": 2,
+        "merge_push_run": 19,
+        "hours": 291.9
+      },
+      {
+        "branch": "chore/dependency-bumps",
+        "first_pr_run": 10,
+        "merge_push_run": 12,
+        "hours": 48.3
+      },
+      {
+        "branch": "fix/approval-audit",
+        "first_pr_run": 14,
+        "merge_push_run": 19,
+        "hours": 67.5
+      },
+      {
+        "branch": "feature/payex-retry",
+        "first_pr_run": 15,
+        "merge_push_run": 16,
+        "hours": 26.9
+      }
+    ],
+    "n": 5,
+    "median_h": 67.5,
+    "p85_h": 291.9
+  },
+  "push_to_main_per_week": 3.9,
+  "failed_runs": [
+    {
+      "run": 6,
+      "branch": "fix/notification-filter",
+      "event": "pull_request",
+      "last_step_recorded": "Upload test results"
+    },
+    {
+      "run": 14,
+      "branch": "fix/approval-audit",
+      "event": "pull_request",
+      "last_step_recorded": "Upload test results"
+    }
+  ]
+}
