@@ -1,0 +1,57 @@
+flowchart LR
+  user["Finance approver / admin (browser)"]
+  lb["Load balancer"]
+  subgraph svc["Invoice approval service (3 instances: web-01, web-02, web-03)"]
+    ui["Static web UI"]
+    auth["Session auth and role filter"]
+    controllers["Invoices and Approvals controllers"]
+    approval["ApprovalService"]
+    discount["DiscountCalculator"]
+    bulk["Bulk approval (UC-1)"]
+    second["Second approver over 1,000 (UC-1)"]
+    partial["Partial approval (UC-2)"]
+    payexclient["PayExClient"]
+    publisher["EventPublisher"]
+    health["/health endpoint"]
+    export["Nightly audit export"]
+    repo["Invoice repository"]
+  end
+  db[("Relational database")]
+  payex["PayEx payment provider (external, HTTPS)"]
+  topic["Service Bus topic invoice-events"]
+  notif["notification-worker"]
+  analytics["analytics-export subscription"]
+  auditsub["audit-archive subscription"]
+  email["Email to suppliers"]
+  central["Central audit archive"]
+  monitor["Alerting and 24x7 on-call"]
+  ci["CI pipeline (GitHub Actions)"]
+  image["Container image"]
+  tests["xUnit and Playwright tests"]
+
+  user --> lb
+  lb --> ui
+  lb --> controllers
+  controllers --> auth
+  controllers --> approval
+  approval --> repo
+  repo --> db
+  approval --> discount
+  controllers --> bulk
+  bulk --> second
+  controllers --> partial
+  approval --> payexclient
+  payexclient --> payex
+  approval --> publisher
+  publisher --> topic
+  topic --> notif
+  topic --> analytics
+  topic --> auditsub
+  notif --> email
+  auditsub --> central
+  export --> central
+  monitor -.-> svc
+  ci --> tests
+  ci --> image
+  image --> svc
+  ci --> health
