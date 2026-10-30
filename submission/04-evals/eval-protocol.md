@@ -12,7 +12,7 @@ Follows `ops/evals/README.md`.
 | Changed variable | Context file: the same harness run from the repo root, so `CLAUDE.md` → `AGENTS.md` loads. Nothing else changes. |
 | Runs | 3 per label, 12 cases each |
 | Scoring | By hand (`scripts/score_evals.py`) against `answer-key.csv`, using the strict rule in the README |
-| Answer key committed | TODO sha + time; must be earlier than the first raw result (checked by `scripts/precheck.py`) |
+| Answer key committed | `274d204`, 2026-10-30T18:18:43+05:30; earlier than the first raw result (checked by `scripts/precheck.py`) |
 
 ## Added cases
 | Case | Defect or clean | Origin (one line) |
