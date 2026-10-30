@@ -1,0 +1,35 @@
+diff --git a/backend/src/InvoiceApp.Domain/ApprovalService.cs b/backend/src/InvoiceApp.Domain/ApprovalService.cs
+--- a/backend/src/InvoiceApp.Domain/ApprovalService.cs
++++ b/backend/src/InvoiceApp.Domain/ApprovalService.cs
+@@ -33,11 +33,7 @@ public class ApprovalService
+         var invoice = Find(invoiceId);
+         EnsurePending(invoice);
+ 
+-        invoice.Status = InvoiceStatus.Approved;
+-        invoice.DecidedBy = approver;
+-        invoice.DecidedAt = DateTime.UtcNow;
+-        _repository.Update(invoice);
+-        return invoice;
++        return Decide(invoice, InvoiceStatus.Approved, approver);
+     }
+ 
+     public Invoice Reject(string invoiceId, string approver, string reason)
+@@ -50,10 +46,15 @@ public class ApprovalService
+         var invoice = Find(invoiceId);
+         EnsurePending(invoice);
+ 
+-        invoice.Status = InvoiceStatus.Rejected;
++        invoice.DecisionNote = reason;
++        return Decide(invoice, InvoiceStatus.Rejected, approver);
++    }
++
++    private Invoice Decide(Invoice invoice, InvoiceStatus outcome, string approver)
++    {
++        invoice.Status = outcome;
+         invoice.DecidedBy = approver;
+         invoice.DecidedAt = DateTime.UtcNow;
+-        invoice.DecisionNote = reason;
+         _repository.Update(invoice);
+         return invoice;
+     }
+     

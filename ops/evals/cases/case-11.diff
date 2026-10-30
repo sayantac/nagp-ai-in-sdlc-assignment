@@ -1,0 +1,44 @@
+diff --git a/backend/src/InvoiceApp.Api/Clients/PayExSubmitter.cs b/backend/src/InvoiceApp.Api/Clients/PayExSubmitter.cs
+new file mode 100644
+--- /dev/null
++++ b/backend/src/InvoiceApp.Api/Clients/PayExSubmitter.cs
+@@ -0,0 +1,39 @@
++using InvoiceApp.Domain;
++
++namespace InvoiceApp.Api.Clients;
++
++/// <summary>Submits an approved invoice to PayEx and returns the payment reference.</summary>
++public class PayExSubmitter
++{
++    private const int MaxAttempts = 3;
++
++    private readonly IPayExClient _payEx;
++    private readonly ILogger<PayExSubmitter> _logger;
++
++    public PayExSubmitter(IPayExClient payEx, ILogger<PayExSubmitter> logger)
++    {
++        _payEx = payEx;
++        _logger = logger;
++    }
++
++    public async Task<string> SubmitAsync(Invoice invoice, CancellationToken ct = default)
++    {
++        for (var attempt = 1; ; attempt++)
++        {
++            try
++            {
++                var receipt = await _payEx.SubmitAsync(invoice, ct);
++                return receipt.Reference;
++            }
++            catch (TimeoutException) when (attempt < MaxAttempts)
++            {
++                // PayEx gives up after 30 seconds.
++                _logger.LogWarning(
++                    "PayEx timed out for {InvoiceId} on attempt {Attempt}; retrying",
++                    invoice.Id, attempt);
++
++                await Task.Delay(TimeSpan.FromSeconds(attempt * 2), ct);
++            }
++        }
++    }
++}
