@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 3,
+  "case": "case-02",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:17:37Z",
+  "wall_seconds": 21.3,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 19271,
+    "stop_reason": "end_turn",
+    "session_id": "0eb7e780-5a28-45ff-90e6-33d6cb80443d",
+    "total_cost_usd": 0.0216804,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 19564,
+      "output_tokens": 1972,
+      "output_tokens_details": {
+        "thinking_tokens": 1088
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1972,
+          "cache_read_input_tokens": 19564,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1972,
+        "cacheReadInputTokens": 19564,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0216804,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 1088,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I reviewed the hunk only. I didn't open the rest of `InvoicesController.cs` or the repo.\n\n**1. `InvoicesController.cs:28`: SQL injection through `customer` (confidence: high)**\n- **What goes wrong:** `customer` is interpolated straight into the SQL string. The endpoint is reachable by any signed-in user.\n- **Example:** `GET /api/invoices/search?customer=' OR 1=1--` returns every invoice. `customer='; DROP TABLE Invoices;--` is a destructive payload if the executor allows stacked statements.\n- **Fix:** Use a parameterized query, or filter in the domain or repository layer without SQL.\n\n**2. `InvoicesController.cs:32`: SQL injection through `status` (confidence: high)**\n- **What goes wrong:** Same pattern as finding 1. `status` is concatenated into the query, so `status=' OR '1'='1` bypasses the filter.\n- **Extra problem:** `status` is never checked against the `Draft`, `PendingApproval`, `Approved` and `Rejected` lifecycle values. Parse it into the enum and reject anything else, which also removes the injection vector.\n\n**3. `InvoicesController.cs:35`: `_queries.Run(sql)` conflicts with the architecture, and I couldn't confirm it compiles (confidence: medium)**\n- **What I couldn't see:** The hunk doesn't show a `_queries` field or constructor injection. If neither exists, this won't compile.\n- **Why it's likely wrong anyway:** `AGENTS.md` says storage is an in-memory repository behind a Domain interface and that no database exists. A raw-SQL runner against an `Invoices` table doesn't match that.\n- **Convention breaks:** Filtering logic belongs in Domain, not the controller. A new endpoint also needs tests using `FakeInvoiceRepository`, and the diff adds none.\n- **Fix:** Add a search method to the invoice repository interface (Domain) with an in-memory implementation (Api). Call it from the controller through `Handle(...)`.\n\n**4. `InvoicesController.cs:26`: unescaped `LIKE` wildcards and unbounded results (confidence: low)**\n- **What goes wrong:** Even once parameterized, `%` and `_` in `customer` act as wildcards. An empty `customer` becomes `%%` and returns everything, with no paging.\n- **Nullability:** If nullable reference types are off in this project, omitting `customer` binds `null` and also returns everything. That is a minor correctness issue.\n\nI'd block the merge on findings 1 and 2.",
+    "ttft_ms": 13117,
+    "type": "result",
+    "duration_ms": 19513,
+    "uuid": "584b5e7e-6bb3-4f6d-bdd6-a199a797cf4f",
+    "ttft_stream_ms": 5014,
+    "time_to_request_ms": 133,
+    "first_content_frame_ms": 5015,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

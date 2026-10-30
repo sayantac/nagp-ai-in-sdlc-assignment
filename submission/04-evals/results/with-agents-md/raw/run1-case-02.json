@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 1,
+  "case": "case-02",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:11:16Z",
+  "wall_seconds": 13.0,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 10742,
+    "stop_reason": "end_turn",
+    "session_id": "55206ed3-f238-4800-948b-1e277e8fbb85",
+    "total_cost_usd": 0.06517479999999999,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 12835,
+      "cache_read_input_tokens": 6708,
+      "output_tokens": 1316,
+      "output_tokens_details": {
+        "thinking_tokens": 524
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 12835,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1316,
+          "cache_read_input_tokens": 6708,
+          "cache_creation_input_tokens": 12835,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 12835
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1316,
+        "cacheReadInputTokens": 6708,
+        "cacheCreationInputTokens": 12835,
+        "webSearchRequests": 0,
+        "costUSD": 0.06517479999999999,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 524,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "**Findings**\n\n1. **`InvoicesController.cs:27` (`Search`): SQL injection via `customer`. Confidence: high.**\n   - `customer` is concatenated straight into the SQL string.\n   - A request like `?customer=' OR 1=1 --` returns every invoice.\n   - `?customer='; DROP TABLE Invoices; --` can run destructive statements, if `_queries.Run` executes multi-statement batches.\n   - Fix: use parameterized queries (`WHERE CustomerName LIKE @customer`, with the `%` added to the parameter value), or filter through the repository.\n\n2. **`InvoicesController.cs:31` (`Search`): SQL injection via `status`. Confidence: high.**\n   - It has the same flaw as finding 1, and the `status` filter is also string-interpolated.\n   - `?status=' OR '1'='1` bypasses the filter.\n   - Validate `status` against the invoice status enum and parameterize it.\n\n3. **`InvoicesController.cs:35`: `_queries` isn't visible in the diff. Confidence: medium.**\n   - The diff adds no field, constructor parameter or `Program.cs` registration for `_queries`.\n   - If it isn't declared elsewhere, this won't compile.\n   - AGENTS.md says storage is an in-memory repository and no database exists. A raw-SQL `Run(string)` abstraction doesn't fit that design, so it's unclear what it would execute against.\n   - I only saw the diff, so I can't rule out that it exists elsewhere.\n\n4. **`InvoicesController.cs:25-35`: breaks project conventions. Confidence: high.**\n   - Query-building logic lives in the controller. AGENTS.md says business rules go in the Domain project and that controllers must not hold logic.\n   - The endpoint skips `Handle(...)`, so service errors won't map to 404/409/400.\n   - No tests were added, though every new endpoint needs them (use `FakeInvoiceRepository`).\n\n5. **`InvoicesController.cs:27`: unescaped LIKE wildcards. Confidence: low.**\n   - Even after parameterizing, a user-supplied `%` or `_` acts as a wildcard.\n   - This is minor next to the injection, but worth escaping.\n\nRoute ordering is fine: the literal `search` segment takes precedence over `{id}`.",
+    "ttft_ms": 5298,
+    "type": "result",
+    "duration_ms": 10997,
+    "uuid": "56262643-2444-4e4a-83b8-9699b82f7e9e",
+    "ttft_stream_ms": 1347,
+    "time_to_request_ms": 158,
+    "first_content_frame_ms": 1348,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-02",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:14:32Z",
+  "wall_seconds": 15.3,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 13106,
+    "stop_reason": "end_turn",
+    "session_id": "fc1f1526-801b-4916-9a0b-cb8db5b621fe",
+    "total_cost_usd": 0.0679288,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 12856,
+      "cache_read_input_tokens": 6708,
+      "output_tokens": 1583,
+      "output_tokens_details": {
+        "thinking_tokens": 593
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 12856,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1583,
+          "cache_read_input_tokens": 6708,
+          "cache_creation_input_tokens": 12856,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 12856
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1583,
+        "cacheReadInputTokens": 6708,
+        "cacheCreationInputTokens": 12856,
+        "webSearchRequests": 0,
+        "costUSD": 0.0679288,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 593,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found one critical defect and a few smaller ones. I reviewed only the diff and didn't open the surrounding files, so anything that depends on code outside it is marked unverified.\n\n**1. SQL injection:** `InvoicesController.cs:28` and `:32`. Confidence: very high.\n- **What goes wrong:** `customer` and `status` come straight from the query string and are interpolated into the SQL text.\n- **Example input:** `GET /api/invoices/search?customer=' OR 1=1 --` returns every invoice. `customer='; DROP TABLE Invoices; --` runs a destructive statement if the executor allows multiple statements.\n- **Status parameter:** `status=' OR '1'='1` has the same effect.\n- **Fix:** use parameterized queries, for example `@customer` and `@status`, with the `%` wildcards added to the parameter value and not to the SQL string. Alternatively, drop raw SQL and filter in the repository.\n\n**2. `_queries` isn't declared in this diff:** `InvoicesController.cs:35`. Confidence: medium (unverified).\n- **What goes wrong:** the diff adds no field, constructor parameter or `Program.cs` registration for `_queries`, and I can't see its type. If it isn't declared elsewhere, the build fails. If it's registered but nothing implements `Run(string)`, the endpoint fails at runtime.\n- **Project conflict:** `AGENTS.md` says the app uses an in-memory repository and has no database, so a method that runs raw SQL has nothing real to run against.\n\n**3. Data access in a controller:** `InvoicesController.cs:28-35`. Confidence: high.\n- **What goes wrong:** this builds the query in the controller. `AGENTS.md` says business logic and data access belong in the Domain project, with repository interfaces implemented in the Api project.\n- **Fix:** add a search method to `IInvoiceRepository` and its in-memory implementation, and have the controller only call it.\n\n**4. No tests:** whole change. Confidence: high.\n- **What goes wrong:** `AGENTS.md` requires tests for every new endpoint, using `FakeInvoiceRepository`. The diff adds none, so nothing covers the missing-`customer` case, the `status` filter or the injection case.\n\n**5. LIKE wildcards in `customer` aren't escaped:** `InvoicesController.cs:28`. Confidence: low.\n- **What goes wrong:** `%` and `_` in user input act as wildcards, so a search for `%` matches every customer. This is minor next to #1 but still needs handling once the query is parameterized.\n\n**6. `status` isn't validated:** `InvoicesController.cs:30-33`. Confidence: low.\n- **What goes wrong:** `status` is a free-form string, not checked against the lifecycle values (Draft, PendingApproval, Approved, Rejected). A typo returns an empty list and not a 400, which `Handle(...)` would normally give.",
+    "ttft_ms": 6306,
+    "type": "result",
+    "duration_ms": 13363,
+    "uuid": "88d872a9-3eaa-4b1e-95ea-59ecfda1e3cf",
+    "ttft_stream_ms": 2126,
+    "time_to_request_ms": 134,
+    "first_content_frame_ms": 2126,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 3,
+  "case": "case-12",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:20:18Z",
+  "wall_seconds": 12.7,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 10745,
+    "stop_reason": "end_turn",
+    "session_id": "70df2954-ef21-4a6b-8db9-2122636e7374",
+    "total_cost_usd": 0.0091402,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 19762,
+      "output_tokens": 716,
+      "output_tokens_details": {
+        "thinking_tokens": 300
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 716,
+          "cache_read_input_tokens": 19762,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 716,
+        "cacheReadInputTokens": 19762,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0091402,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 300,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff.\n\nThe refactor keeps the old behavior:\n\n- **`Approve`** (`ApprovalService.cs:36`): `Decide` sets the same three fields as before (`Status`, `DecidedBy`, `DecidedAt`) and then calls `_repository.Update`. It still doesn't touch `DecisionNote`, as before.\n- **`Reject`** (`ApprovalService.cs:49`): `DecisionNote` is now set before `Decide` instead of after the status change. Both writes land on the same `invoice` object before the single `Update` call, so nothing outside the method can see the new order. If `Update` threw, the in-memory object would already be mutated in either version.\n- **`Decide`** (`ApprovalService.cs:52`): `Find` and `EnsurePending` still run in the callers, before any mutation. The reason validation above line 46 is unchanged, so the guard order is the same.\n\n**Confidence:** high for the changed lines. I only reviewed the diff, not the rest of `ApprovalService.cs` or the tests. I didn't check whether any test asserts `DecisionNote` is null after `Approve`, or runs against a repository that copies invoices instead of returning the same reference. Neither case is affected by this change.",
+    "ttft_ms": 7716,
+    "type": "result",
+    "duration_ms": 10981,
+    "uuid": "63f3b169-a0f1-4d36-b008-fdb9592b5024",
+    "ttft_stream_ms": 5268,
+    "time_to_request_ms": 134,
+    "first_content_frame_ms": 5268,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

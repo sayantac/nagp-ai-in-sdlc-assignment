@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-11",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:16:46Z",
+  "wall_seconds": 19.8,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 17789,
+    "stop_reason": "end_turn",
+    "session_id": "c9250974-eda9-4779-84ce-93550735e639",
+    "total_cost_usd": 0.0221559,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 19819,
+      "output_tokens": 2017,
+      "output_tokens_details": {
+        "thinking_tokens": 965
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 2017,
+          "cache_read_input_tokens": 19819,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 2017,
+        "cacheReadInputTokens": 19819,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0221559,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 965,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found one high-confidence defect and two lower-confidence ones. I reviewed only the diff. `IPayExClient`, its receipt type and the call sites aren't in it, so I haven't checked them.\n\n**1. Retrying a timed-out payment submission can pay the invoice twice**\n- **Where:** `backend/src/InvoiceApp.Api/Clients/PayExSubmitter.cs:25` and `:28`\n- **What goes wrong:** The comment at line 30 says PayEx gives up after 30 seconds. A timeout therefore means the outcome is unknown, not that the request failed. PayEx may have accepted and processed the submission before the response was lost. The code resends the same call, and `_payEx.SubmitAsync(invoice, ct)` passes no idempotency key or client-generated submission ID. It also never checks whether PayEx already holds a payment for that invoice. If the first attempt succeeded on PayEx's side, attempt 2 or 3 creates a duplicate payment. That is the exactly-once failure your ADR is meant to prevent.\n- **Fix:** Send a stable idempotency key, such as one derived from the invoice ID, on every attempt. If PayEx doesn't support keys, look up the existing payment by invoice before retrying. Alternatively, don't auto-retry timeouts: record the submission as \"unknown\" and reconcile it.\n- **Confidence:** High (about 85%) that this is a defect. The 15% uncertainty is because I haven't seen whether `IPayExClient` adds an idempotency key internally.\n\n**2. The `catch` may never match a real timeout**\n- **Where:** `PayExSubmitter.cs:28`\n- **What goes wrong:** If `IPayExClient` is built on `HttpClient`, its timeouts usually surface as `TaskCanceledException` (an `OperationCanceledException`), with a `TimeoutException` only as the inner exception. In that case the filter never matches and the first timeout propagates with no retry. This is the opposite failure to finding 1, and it would hide the retry path from any test that throws `TimeoutException` directly from a fake.\n- **Confidence:** Low to medium (about 40%). It depends on how the client is implemented.\n\n**3. The change breaks two project conventions**\n- **Where:** `PayExSubmitter.cs:6` (the whole class)\n- **What goes wrong:** The diff adds no tests, and `AGENTS.md` requires tests for every new rule. The retry and backoff policy is arguably a business rule, so it should live in the Domain project rather than `InvoiceApp.Api`. The submitter also doesn't check that the invoice is `Approved` before sending it for payment. If a caller passes a Draft or Rejected invoice, it is submitted anyway.\n- **Confidence:** Medium (about 60%). The convention breaks are certain, but whether the Approved check belongs here or in the caller is a judgment call.\n\n**Minor, no action needed:** In the worst case a call blocks for about 96 seconds (three 30-second attempts plus 2 s and 4 s of backoff). That matters if it runs inside a web request. The backoff has no jitter.",
+    "ttft_ms": 10185,
+    "type": "result",
+    "duration_ms": 18033,
+    "uuid": "c1ae825d-42c4-4f89-b24c-87bb2bdfd701",
+    "ttft_stream_ms": 2977,
+    "time_to_request_ms": 135,
+    "first_content_frame_ms": 2978,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

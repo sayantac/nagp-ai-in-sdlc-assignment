@@ -2,6 +2,10 @@
 """Interactive, strict scoring of eval results against YOUR answer key.
 
   python3 scripts/score_evals.py baseline
+  python3 scripts/score_evals.py baseline --fast
+
+With --fast, only the verdict is asked: the finding summary, confidence and
+notes prompts are skipped and the row is saved straight away.
 
 For each unscored row: shows the answer key for the case, then the review the
 agent produced, then asks for a verdict. Saves after every row, so you can quit
@@ -9,6 +13,7 @@ and resume. Scoring rule (ops/evals/README.md): "caught" only if the review
 names the actual defect for the right reason. Style notes on a clean case are
 not false alarms.
 """
+import argparse
 import csv
 import json
 import sys
@@ -37,9 +42,12 @@ def review_text(raw_file):
 
 
 def main():
-    if len(sys.argv) != 2:
-        sys.exit("usage: score_evals.py <label>")
-    csv_path = EVALS / "results" / f"results-{sys.argv[1]}.csv"
+    parser = argparse.ArgumentParser(description="Score eval results against your answer key.")
+    parser.add_argument("label", help="results label, e.g. baseline")
+    parser.add_argument("--fast", action="store_true",
+                        help="ask only for the verdict; skip summary, confidence and notes")
+    args = parser.parse_args()
+    csv_path = EVALS / "results" / f"results-{args.label}.csv"
     with csv_path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
         fields, rows = reader.fieldnames, list(reader)
@@ -65,9 +73,11 @@ def main():
         if answer == "q":
             break
         row["verdict"] = choices[answer]
-        row["finding_summary"] = input("finding summary (one line, enter to skip) > ").strip()
-        row["confidence_reported"] = input("confidence the review reported [h/m/l/none] > ").strip()
-        note = input("notes (enter to skip) > ").strip()
+        note = ""
+        if not args.fast:
+            row["finding_summary"] = input("finding summary (one line, enter to skip) > ").strip()
+            row["confidence_reported"] = input("confidence the review reported [h/m/l/none] > ").strip()
+            note = input("notes (enter to skip) > ").strip()
         row["notes"] = ("wrong reason; " if answer == "w" else "") + note
         with csv_path.open("w", newline="", encoding="utf-8") as handle:
             writer = csv.DictWriter(handle, fieldnames=fields)

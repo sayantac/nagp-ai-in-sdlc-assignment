@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 3,
+  "case": "case-10",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:19:47Z",
+  "wall_seconds": 11.1,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 8929,
+    "stop_reason": "end_turn",
+    "session_id": "746dd175-4194-4941-b910-4730a045b31e",
+    "total_cost_usd": 0.0160776,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 676,
+      "cache_read_input_tokens": 39056,
+      "output_tokens": 946,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 676,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 291,
+          "cache_read_input_tokens": 19528,
+          "cache_creation_input_tokens": 676,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 676
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 946,
+        "cacheReadInputTokens": 39056,
+        "cacheCreationInputTokens": 676,
+        "webSearchRequests": 0,
+        "costUSD": 0.0160776,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 2,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found one real defect in the diff, plus a lower-confidence test-coverage gap.\n\n1. **`ApiControllerBase.cs:30` (high confidence).** The new `catch (Exception)` returns `200 {status:\"completed\"}` for any unexpected error. A `NullReferenceException` or a repository failure during approve, reject or delete would be reported to the caller as success. The error is never logged and never produces a 500, so monitoring would see nothing. The response body also differs from the normal `Ok(action())` shape. Remove the catch and let the framework return a 500, or log the exception and return `StatusCode(500, ...)`.\n\n2. **`ApiControllerBase.cs:30` (medium confidence).** The new branch has no test, which goes against the \"every new rule or endpoint needs tests\" rule in AGENTS.md. A test would probably have exposed the false-success behavior.",
+    "ttft_ms": 6052,
+    "type": "result",
+    "duration_ms": 9260,
+    "uuid": "c46bd5db-b2e6-4a07-9558-4212cbe77316",
+    "ttft_stream_ms": 1460,
+    "time_to_request_ms": 151,
+    "first_content_frame_ms": 1461,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

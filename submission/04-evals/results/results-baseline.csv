@@ -1,37 +1,37 @@
 run,case,model,prompt_version,context,verdict,finding_summary,confidence_reported,notes,raw_file
-1,case-01,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-01.json
-1,case-02,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-02.json
-1,case-03,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-03.json
-1,case-04,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-04.json
-1,case-05,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-05.json
-1,case-06,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-06.json
-1,case-07,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-07.json
-1,case-08,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-08.json
-1,case-09,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-09.json
-1,case-10,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-10.json
-1,case-11,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-11.json
-1,case-12,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run1-case-12.json
-2,case-01,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-01.json
-2,case-02,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-02.json
-2,case-03,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-03.json
-2,case-04,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-04.json
-2,case-05,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-05.json
-2,case-06,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-06.json
-2,case-07,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-07.json
-2,case-08,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-08.json
-2,case-09,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-09.json
-2,case-10,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-10.json
-2,case-11,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-11.json
-2,case-12,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run2-case-12.json
-3,case-01,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-01.json
-3,case-02,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-02.json
-3,case-03,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-03.json
-3,case-04,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-04.json
-3,case-05,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-05.json
-3,case-06,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-06.json
-3,case-07,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-07.json
-3,case-08,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-08.json
-3,case-09,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-09.json
-3,case-10,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-10.json
-3,case-11,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-11.json
-3,case-12,claude-sonnet-5-5,v1,none,,,,,submission/04-evals/results/baseline/raw/run3-case-12.json
+1,case-01,claude-sonnet-5-5,v1,none,caught,null Ids NRE; partial commit,high,,submission/04-evals/results/baseline/raw/run1-case-01.json
+1,case-02,claude-sonnet-5-5,v1,none,caught,SQL injection via customer and status,high,,submission/04-evals/results/baseline/raw/run1-case-02.json
+1,case-03,claude-sonnet-5-5,v1,none,caught,rounding mode ToZero truncates discount; cent shift,"high (behaviour change), medium (unintended)",,submission/04-evals/results/baseline/raw/run1-case-03.json
+1,case-04,claude-sonnet-5-5,v1,none,clean_ok,no defects; pure rename,high,,submission/04-evals/results/baseline/raw/run1-case-04.json
+1,case-05,claude-sonnet-5-5,v1,none,caught,Delete has no RequireRole; Update has it,high,,submission/04-evals/results/baseline/raw/run1-case-05.json
+1,case-06,claude-sonnet-5-5,v1,none,clean_ok,no defects; caveats flagged as not defects,"high (syntax/logic), moderate (tests vs service)",,submission/04-evals/results/baseline/raw/run1-case-06.json
+1,case-07,claude-sonnet-5-5,v1,none,caught,logs whole session and invoice objects; sensitive data in logs,"high (PII), medium-high (secrets)",,submission/04-evals/results/baseline/raw/run1-case-07.json
+1,case-08,claude-sonnet-5-5,v1,none,caught,Dictionary not thread-safe; Add check-then-act race,high(85%),,submission/04-evals/results/baseline/raw/run1-case-08.json
+1,case-09,claude-sonnet-5-5,v1,none,caught,README sign-in-resets-data claim is false,about 60%,,submission/04-evals/results/baseline/raw/run1-case-09.json
+1,case-10,claude-sonnet-5-5,v1,none,caught,catch-all returns 200 completed; error swallowed,high,,submission/04-evals/results/baseline/raw/run1-case-10.json
+1,case-11,claude-sonnet-5-5,v1,none,caught,retry after timeout can pay twice; no idempotency key,medium-high,,submission/04-evals/results/baseline/raw/run1-case-11.json
+1,case-12,claude-sonnet-5-5,v1,none,clean_ok,no defects; refactor traced and equivalent,high (about 90%),,submission/04-evals/results/baseline/raw/run1-case-12.json
+2,case-01,claude-sonnet-5-5,v1,none,caught,"null Ids crash, or partial commit mid-loop",h,,submission/04-evals/results/baseline/raw/run2-case-01.json
+2,case-02,claude-sonnet-5-5,v1,none,caught,SQL injection,h,,submission/04-evals/results/baseline/raw/run2-case-02.json
+2,case-03,claude-sonnet-5-5,v1,none,caught,the rounding-mode change or the truncated discount,h,,submission/04-evals/results/baseline/raw/run2-case-03.json
+2,case-04,claude-sonnet-5-5,v1,none,clean_ok,,h,,submission/04-evals/results/baseline/raw/run2-case-04.json
+2,case-05,claude-sonnet-5-5,v1,none,caught,missing authorisation on Delete,h,,submission/04-evals/results/baseline/raw/run2-case-05.json
+2,case-06,claude-sonnet-5-5,v1,none,clean_ok,,h,,submission/04-evals/results/baseline/raw/run2-case-06.json
+2,case-07,claude-sonnet-5-5,v1,none,caught,whole session or invoice logged,h,,submission/04-evals/results/baseline/raw/run2-case-07.json
+2,case-08,claude-sonnet-5-5,v1,none,caught,"Dictionary replacing ConcurrentDictionary, or the Add race",h,,submission/04-evals/results/baseline/raw/run2-case-08.json
+2,case-09,claude-sonnet-5-5,v1,none,caught,the false “sign in again resets data” claim,h,,submission/04-evals/results/baseline/raw/run2-case-09.json
+2,case-10,claude-sonnet-5-5,v1,none,caught,the catch-all returning 200 “completed”,h,,submission/04-evals/results/baseline/raw/run2-case-10.json
+2,case-11,claude-sonnet-5-5,v1,none,caught,"duplicate payment, or non-idempotent retry after a timeout",h,,submission/04-evals/results/baseline/raw/run2-case-11.json
+2,case-12,claude-sonnet-5-5,v1,none,clean_ok,,h,,submission/04-evals/results/baseline/raw/run2-case-12.json
+3,case-01,claude-sonnet-5-5,v1,none,caught,c,"null Ids crash, or partial commit mid-loop",,submission/04-evals/results/baseline/raw/run3-case-01.json
+3,case-02,claude-sonnet-5-5,v1,none,caught,SQL injection,h,,submission/04-evals/results/baseline/raw/run3-case-02.json
+3,case-03,claude-sonnet-5-5,v1,none,caught,the rounding-mode change or the truncated discount,h,,submission/04-evals/results/baseline/raw/run3-case-03.json
+3,case-04,claude-sonnet-5-5,v1,none,clean_ok,,h,,submission/04-evals/results/baseline/raw/run3-case-04.json
+3,case-05,claude-sonnet-5-5,v1,none,caught,missing authorisation on Delete,h,,submission/04-evals/results/baseline/raw/run3-case-05.json
+3,case-06,claude-sonnet-5-5,v1,none,clean_ok,,,,submission/04-evals/results/baseline/raw/run3-case-06.json
+3,case-07,claude-sonnet-5-5,v1,none,caught,whole session or invoice logged,h,,submission/04-evals/results/baseline/raw/run3-case-07.json
+3,case-08,claude-sonnet-5-5,v1,none,caught,"Dictionary replacing ConcurrentDictionary, or the Add race",h,,submission/04-evals/results/baseline/raw/run3-case-08.json
+3,case-09,claude-sonnet-5-5,v1,none,caught,the false “sign in again resets data” claim,h,,submission/04-evals/results/baseline/raw/run3-case-09.json
+3,case-10,claude-sonnet-5-5,v1,none,caught,the catch-all returning 200 “completed”,m,,submission/04-evals/results/baseline/raw/run3-case-10.json
+3,case-11,claude-sonnet-5-5,v1,none,caught,"duplicate payment, or non-idempotent retry after a timeout",h,,submission/04-evals/results/baseline/raw/run3-case-11.json
+3,case-12,claude-sonnet-5-5,v1,none,clean_ok,,h,,submission/04-evals/results/baseline/raw/run3-case-12.json

@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-08",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:15:54Z",
+  "wall_seconds": 20.2,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 17970,
+    "stop_reason": "end_turn",
+    "session_id": "c42b0137-a6a5-4e25-b0e7-ee361d2497a5",
+    "total_cost_usd": 0.0672448,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 12985,
+      "cache_read_input_tokens": 6708,
+      "output_tokens": 1463,
+      "output_tokens_details": {
+        "thinking_tokens": 642
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 12985,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1463,
+          "cache_read_input_tokens": 6708,
+          "cache_creation_input_tokens": 12985,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 12985
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1463,
+        "cacheReadInputTokens": 6708,
+        "cacheCreationInputTokens": 12985,
+        "webSearchRequests": 0,
+        "costUSD": 0.0672448,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 642,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two defects. The diff cuts off after `Update`, so I couldn't check the rest of the file.\n\n**1. `InMemoryInvoiceRepository.cs:9`: a plain `Dictionary` is not thread-safe, but the repository is shared across requests. Confidence: high.**\n- `ConcurrentDictionary` was replaced with `Dictionary`. Per the project layout, this is the in-memory repository registered in `Program.cs`, so it is almost certainly a singleton. ASP.NET Core handles requests on concurrent threads.\n- Concurrent `Add` or `Update` calls can corrupt the dictionary's internal state. That shows up as lost writes, an exception, or in the worst case an infinite loop in a bucket chain.\n- A read such as `GetById` running during a write can also throw or return wrong data.\n- The listing method is not in the diff. If it enumerates `_invoices.Values`, it will throw `InvalidOperationException` (\"Collection was modified\") when another request writes during enumeration. `ConcurrentDictionary` allowed that enumeration safely.\n- Failure scenario: two approvers act at once, or a list request overlaps a create. The result is an intermittent 500 or a silently dropped invoice update.\n\n**2. `InMemoryInvoiceRepository.cs:19-24`: the duplicate-ID check in `Add` can race. Confidence: high.**\n- The old `TryAdd` checked and inserted in one atomic step. The new code calls `ContainsKey`, then does a separate `_invoices[invoice.Id] = invoice`.\n- Two concurrent `Add` calls with the same ID can both pass the check, and the second silently overwrites the first. The \"already exists\" guard is lost.\n- This matters most if `Add` is the path that enforces uniqueness for ID collisions. It is also a plain correctness regression, even if you ignore finding 1.\n\n**Minor (confidence medium):** the `using System.Collections.Concurrent;` directive is probably unused now. It would only cause a warning, and I can't confirm it from this diff.\n\n**Suggested fix:** revert to `ConcurrentDictionary` and `TryAdd`. If the intent was to drop the concurrent type, guard every access with a single `lock`, including enumeration, and make the check-then-add atomic inside it. No test in the diff covers concurrency, so a parallel `Add` test would also be worth adding, as the project's conventions require tests for changed behavior.",
+    "ttft_ms": 11989,
+    "type": "result",
+    "duration_ms": 18228,
+    "uuid": "405d6848-ff1d-4219-bf9a-8b72cccb5276",
+    "ttft_stream_ms": 7016,
+    "time_to_request_ms": 133,
+    "first_content_frame_ms": 7016,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

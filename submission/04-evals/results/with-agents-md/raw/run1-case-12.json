@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 1,
+  "case": "case-12",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:13:57Z",
+  "wall_seconds": 11.2,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 8683,
+    "stop_reason": "end_turn",
+    "session_id": "ab9beb63-97dc-4a0e-84fe-b44e249f8ab2",
+    "total_cost_usd": 0.061280799999999996,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 13054,
+      "cache_read_input_tokens": 6708,
+      "output_tokens": 839,
+      "output_tokens_details": {
+        "thinking_tokens": 365
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 13054,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 839,
+          "cache_read_input_tokens": 6708,
+          "cache_creation_input_tokens": 13054,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 13054
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 839,
+        "cacheReadInputTokens": 6708,
+        "cacheCreationInputTokens": 13054,
+        "webSearchRequests": 0,
+        "costUSD": 0.061280799999999996,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 365,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff.\n\nIt's a behavior-preserving extraction. I checked the following:\n\n- **Approve:** `Decide(invoice, Approved, approver)` sets the same three fields (`Status`, `DecidedBy`, `DecidedAt`), then calls `Update` and returns the invoice. That matches the old inline code.\n- **Reject:** `DecisionNote = reason` is now set before `Decide` instead of between `DecidedAt` and `Update`. Nothing between those two points reads the note or can throw, so the entity passed to `Update` is the same. If `Update` throws, the mutation was already unrolled in the old code too, so failure behavior is unchanged.\n- **Ordering:** `Find` and `EnsurePending` still run before any mutation. The reason validation sits above the hunk and isn't touched.\n- **Conventions:** The helper is private, in the Domain project, and has no `flag`-style parameters. It follows the AGENTS.md rules.\n\n**Confidence:** high for the code shown. I only saw the diff, not the whole file. I can't rule out a subclass or caller that depends on the old field-assignment order, but that would be unusual here.\n\n**Test coverage:** The diff includes no test changes. That's reasonable for a pure refactor, as long as the existing `ApprovalServiceTests` cover the Approve and Reject paths, including that a rejection stores the note. I haven't checked that they do.",
+    "ttft_ms": 5498,
+    "type": "result",
+    "duration_ms": 8915,
+    "uuid": "20a43519-834a-4a00-8c67-4da2a372ec41",
+    "ttft_stream_ms": 2690,
+    "time_to_request_ms": 130,
+    "first_content_frame_ms": 2691,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

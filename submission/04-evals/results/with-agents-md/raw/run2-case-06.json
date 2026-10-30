@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-06",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:15:23Z",
+  "wall_seconds": 17.7,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 15538,
+    "stop_reason": "end_turn",
+    "session_id": "0739a637-8cd5-4fd5-b2b8-3a5934e79b08",
+    "total_cost_usd": 0.076994,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 13715,
+      "cache_read_input_tokens": 26560,
+      "output_tokens": 1947,
+      "output_tokens_details": {
+        "thinking_tokens": 549
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 13715,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1514,
+          "cache_read_input_tokens": 19852,
+          "cache_creation_input_tokens": 571,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 571
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 1947,
+        "cacheReadInputTokens": 26560,
+        "cacheCreationInputTokens": 13715,
+        "webSearchRequests": 0,
+        "costUSD": 0.076994,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 549,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 3,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I couldn't read `ApprovalService`, `Invoice` or `FakeInvoiceRepository`, because the file tools are disabled in this session. This review covers the diff only. Nothing below is confirmed against the code under test, and the first two findings depend on code I haven't seen.\n\n**1. `ApprovalServiceTests.cs`, `Reject_WithWhitespaceReason_Throws` (about line 62). Confidence: medium.**\n- `Assert.Throws<ArgumentException>` requires the exact type, so a subclass fails it. `ArgumentNullException` is the usual one.\n- If the service signals bad input with a domain exception or `InvalidOperationException`, the test fails. `AGENTS.md` says `Handle(...)` maps service errors to 404, 409 and 400, so the domain may use its own exception types.\n- If `Reject` has no whitespace check, the test also fails, and that would be a real bug the test found.\n- The test doesn't assert that the invoice is still `PendingApproval` after the throw. A service that changed the status and then threw would still pass.\n\n**2. `ApprovalServiceTests.cs`, `Approve_RecordsTheApproverAndTime` (about line 74). Confidence: medium-low.**\n- It assumes `Invoice` has `DecidedBy` and `DecidedAt` (nullable `DateTime`), and that the service sets them from `DateTime.UtcNow`. If `DecidedAt` is a `DateTimeOffset`, the `.Value` and `InRange` call won't compile.\n- If the service uses `DateTime.Now`, the range check fails on any machine not on UTC, and passes on a UTC CI runner. That makes it a local-only failure.\n- It reads the real wall clock, so a clock adjustment between the two reads can make it flaky. It is also coupled to the system clock. An injected `TimeProvider` or clock would be sturdier, but only if the service already has one.\n\n**3. `ApprovalServiceTests.cs`, `Approve_UnknownInvoice_Throws` (about line 83). Confidence: medium-low.**\n- It has the same exact-type risk with `KeyNotFoundException`. If the repository or service throws a custom not-found exception, the test fails.\n- It uses `FakeInvoiceRepository`, so the test only holds if the fake's miss behavior matches the real repository's. A fake that returns null and a service that converts it is fine. A fake that throws its own exception type is not.\n\n**4. Coverage gap. Confidence: low.**\n- The tests cover only the `Approve` happy path and unknown-invoice cases. `Reject` records no `DecidedBy`/`DecidedAt` assertion, and neither method has a wrong-state case (already approved or rejected). If those rules exist in the service, they are untested, and `AGENTS.md` says every new rule needs tests.\n\nI found no defects that I can confirm from the diff alone. The style fits the surrounding tests: the `Pending(...)` helper, the `new ApprovalService(repository)` setup and the naming are consistent. If you enable the file tools, I can check the exception types and `Invoice` properties directly.",
+    "ttft_ms": 2261,
+    "type": "result",
+    "duration_ms": 15806,
+    "uuid": "318bf28d-43a7-48de-8498-0f2d69e05aaa",
+    "ttft_stream_ms": 1753,
+    "time_to_request_ms": 131,
+    "first_content_frame_ms": 1754,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

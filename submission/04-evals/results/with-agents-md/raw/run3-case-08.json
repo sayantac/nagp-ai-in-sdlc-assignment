@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 3,
+  "case": "case-08",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:19:17Z",
+  "wall_seconds": 12.1,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 10049,
+    "stop_reason": "end_turn",
+    "session_id": "04a8d89b-9fb8-4b71-b4b6-8460166b1cee",
+    "total_cost_usd": 0.0136533,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 19693,
+      "output_tokens": 1168,
+      "output_tokens_details": {
+        "thinking_tokens": 360
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1168,
+          "cache_read_input_tokens": 19693,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1168,
+        "cacheReadInputTokens": 19693,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0136533,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 360,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two defects, and they share one cause: the change removes the thread safety of `ConcurrentDictionary`.\n\n**1. `InMemoryInvoiceRepository.cs:9`: unsynchronized `Dictionary` shared across requests (confidence: high)**\n- **What goes wrong:** `Dictionary<,>` isn't safe for concurrent reads and writes. A repository like this is normally registered as a singleton in `Program.cs`, and I didn't check that registration. If it is a singleton, concurrent ASP.NET requests (create, approve, list) share one instance.\n- **Failure scenario:** One request calls `Add` or `Update` while another calls `GetById` or enumerates the invoices. Possible results are:\n  - lost writes;\n  - a corrupted internal state, which can make a lookup loop forever and pin a CPU;\n  - an `InvalidOperationException` (\"Collection was modified\") from the enumerating call.\n- **Fix:** Revert to `ConcurrentDictionary`, or guard every access with a `lock`.\n\n**2. `InMemoryInvoiceRepository.cs:19-24`: `Add` checks and then inserts non-atomically (confidence: high)**\n- **What goes wrong:** `ContainsKey` followed by `_invoices[id] = invoice` is a check-then-act race. The original `TryAdd` was atomic.\n- **Failure scenario:** Two requests add the same invoice ID at the same time. Both pass `ContainsKey`, and both write. The second silently overwrites the first, and no \"already exists\" exception is thrown. This breaks the duplicate-ID guarantee that the exception was there to provide.\n- **Fix:** Keep `TryAdd`. With a plain `Dictionary` and a lock, `TryAdd` is still only safe if the lock covers all access.\n\n**Not verifiable from this diff (confidence: medium)**\n- The unchanged `GetAll` (the hunk context hides it) likely enumerates `_invoices.Values`. With a plain `Dictionary` it now has the enumeration-during-write hazard from finding 1. `ConcurrentDictionary` enumeration was safe.\n- `using System.Collections.Concurrent;` is probably unused now. That's harmless, but compilers or analyzers may warn about it.\n\nI can't see a reason for the change in the diff. If it's meant as a simplification, it's a regression, and I'd revert it.",
+    "ttft_ms": 4234,
+    "type": "result",
+    "duration_ms": 10290,
+    "uuid": "950261ea-8d0a-4bc2-b5db-824da9865098",
+    "ttft_stream_ms": 1110,
+    "time_to_request_ms": 140,
+    "first_content_frame_ms": 1110,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 1,
+  "case": "case-09",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:13:05Z",
+  "wall_seconds": 17.3,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 14690,
+    "stop_reason": "end_turn",
+    "session_id": "43e8e48d-9c7d-4c3a-b434-9bf598384742",
+    "total_cost_usd": 0.0715478,
+    "usage": {
+      "input_tokens": 6,
+      "cache_creation_input_tokens": 13448,
+      "cache_read_input_tokens": 46338,
+      "output_tokens": 1311,
+      "output_tokens_details": {
+        "thinking_tokens": 209
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 13448,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 786,
+          "cache_read_input_tokens": 20062,
+          "cache_creation_input_tokens": 94,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 94
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 6,
+        "outputTokens": 1311,
+        "cacheReadInputTokens": 46338,
+        "cacheCreationInputTokens": 13448,
+        "webSearchRequests": 0,
+        "costUSD": 0.0715478,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 209,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 3,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found one likely defect and one non-issue. I couldn't open the source: the search and read tools weren't available in this session, so the README finding rests on how the app is described in AGENTS.md.\n\n**Finding 1: `README.md`, new line 25 (\"To reset the sample data without restarting, sign out and sign in again.\") — confidence: about 75%**\n\n- **What goes wrong:** The same README paragraph says the data lives in an in-memory store that is only recreated \"on every start\". Those two statements contradict each other.\n  - AGENTS.md describes a sign-in layer in `Auth/` and a separate in-memory repository.\n  - Signing in and out would change the session. It wouldn't reseed the invoice repository, which is almost certainly a singleton registered in `Program.cs`.\n  - AGENTS.md also says business logic stays out of `Program.cs` and controllers, so there is probably no reset hook on sign-in.\n- **Failure scenario:** A user approves or rejects invoices, signs out and back in expecting a clean state, and sees the same data. Anyone using this to reset state between manual tests, or between e2e runs, gets stale state and confusing results.\n- **Fix:** Delete the sentence, or say that restarting the process is the only way to reset. If a reset really exists, point to the code that does it.\n- **To confirm:** Check the `Program.cs` registration for the invoice repository (a singleton means my reading is right) and the sign-in and sign-out handlers for any reseed.\n\n**Finding 2: `README.md`, new lines 21–23 (\"These accounts exist only in the in-memory store and are recreated on every start\") — confidence: about 40%**\n\n- **What goes wrong:** AGENTS.md lists the demo accounts as fixed, documented credentials. They may be hard-coded in the `Auth/` code rather than stored in the in-memory repository.\n- **Failure scenario:** If so, the sentence misdescribes where they live. The practical claim that data is lost on restart is still correct.\n- **Fix:** If they are hard-coded, say \"demo accounts are built in\". This is low severity.\n\n**`appsettings.json`: no defect.** Raising `Microsoft.AspNetCore` to `Warning` is the standard template setting. It only reduces request-pipeline log noise, and application logs stay at `Information`.",
+    "ttft_ms": 3263,
+    "type": "result",
+    "duration_ms": 15106,
+    "uuid": "2d50774b-742b-4b03-8b56-ac291048d121",
+    "ttft_stream_ms": 1962,
+    "time_to_request_ms": 162,
+    "first_content_frame_ms": 1963,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

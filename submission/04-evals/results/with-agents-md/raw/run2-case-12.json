@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-12",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:17:05Z",
+  "wall_seconds": 9.8,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 7680,
+    "stop_reason": "end_turn",
+    "session_id": "82dbd01d-dd65-48e4-91b9-c9e90de0fc9a",
+    "total_cost_usd": 0.0106002,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 19762,
+      "output_tokens": 862,
+      "output_tokens_details": {
+        "thinking_tokens": 386
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 862,
+          "cache_read_input_tokens": 19762,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 862,
+        "cacheReadInputTokens": 19762,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0106002,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 386,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff.\n\n- **`Approve`:** The extracted `Decide` sets `Status`, `DecidedBy` and `DecidedAt`, then calls `_repository.Update`, and returns the invoice. That is the same set of assignments and calls as the inline code it replaces.\n- **`Reject`:** `DecisionNote = reason` is now set before `Decide` runs instead of between `DecidedAt` and `Update`. Both versions end with the same field values and `Update` still runs after all of them. The only difference is assignment order, and nothing reads the invoice in between.\n- **Failure behavior:** If `Update` threw, the old code had already changed the in-memory invoice, and the new code has too. Failure behavior is unchanged.\n- **Validation order:** `Find` and `EnsurePending` still run before any mutation in both methods. The reason and approver checks above the hunk are untouched.\n- **Domain boundary:** The new private method stays in `ApprovalService`, so no business logic moves into controllers or `Program.cs`.\n\nI only saw the diff hunks, not the rest of `ApprovalService.cs`. This verdict covers the lines shown, not the surrounding code. My confidence that this is a behavior-preserving refactor is high.\n\nOne non-defect note: the diff adds no tests, but none are needed for a pure refactor. The existing `ApprovalServiceTests` should cover both paths. I haven't run them.",
+    "ttft_ms": 4169,
+    "type": "result",
+    "duration_ms": 7953,
+    "uuid": "bac512ee-3d2f-48d5-9811-56ee4d738e41",
+    "ttft_stream_ms": 970,
+    "time_to_request_ms": 172,
+    "first_content_frame_ms": 971,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

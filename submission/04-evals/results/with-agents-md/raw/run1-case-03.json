@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 1,
+  "case": "case-03",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:11:29Z",
+  "wall_seconds": 16.5,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 14144,
+    "stop_reason": "end_turn",
+    "session_id": "f361b5d9-1d96-4b35-9f4c-1509abcf1400",
+    "total_cost_usd": 0.06505079999999999,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 12759,
+      "cache_read_input_tokens": 6708,
+      "output_tokens": 1334,
+      "output_tokens_details": {
+        "thinking_tokens": 704
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 12759,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1334,
+          "cache_read_input_tokens": 6708,
+          "cache_creation_input_tokens": 12759,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 12759
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1334,
+        "cacheReadInputTokens": 6708,
+        "cacheCreationInputTokens": 12759,
+        "webSearchRequests": 0,
+        "costUSD": 0.06505079999999999,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 704,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two defects, both at `backend/src/InvoiceApp.Domain/DiscountCalculator.cs:16`. I only had the diff, so I didn't run any tests.\n\n1. **Discount is truncated, so the customer gets less discount than before** (confidence: high). The new code rounds the discount itself with `MidpointRounding.ToZero`. In .NET, `ToZero` is not a midpoint tie-breaker. It truncates every value, not just exact halves.\n   - Example: `Apply(19.99m, 10m)` gives a discount of 1.999, which becomes 1.99. The result is 18.00. The old code gave 17.991, which rounded to 17.99.\n   - Every invoice whose discount has a third decimal digit can end up 1 cent higher than before. This is a money-calculation change with no stated reason.\n\n2. **The outer `ToZero` replaces the old `AwayFromZero` rounding, so tie behaviour changes** (confidence: medium-high).\n   - The old code rounded half away from zero, which is the usual money convention.\n   - The new outer rounding truncates. Any existing test that expects 0.005 to round up will now fail.\n   - If `amount` is always 2 decimal places, the outer round does nothing, because 2dp minus 2dp is still 2dp. If `amount` can have more places, it truncates in the customer's disfavour, which the inner round does not.\n   - The two roundings point in opposite directions: the discount is shrunk and the total is shrunk. That's inconsistent, and I can't see a policy that would justify it.\n\nBoth findings turn on whether the change was deliberate. If it was, the intent should be stated. If not, revert to a single `Math.Round(amount - discount, 2, MidpointRounding.AwayFromZero)`. Whichever you choose, add tests for 3-decimal discounts and exact-half values, as `AGENTS.md` requires.",
+    "ttft_ms": 9266,
+    "type": "result",
+    "duration_ms": 14387,
+    "uuid": "c397cacd-87bd-4868-9d3b-32244b36bd4a",
+    "ttft_stream_ms": 3258,
+    "time_to_request_ms": 130,
+    "first_content_frame_ms": 3258,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

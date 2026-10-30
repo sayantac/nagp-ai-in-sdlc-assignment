@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-03",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:14:47Z",
+  "wall_seconds": 15.1,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 12772,
+    "stop_reason": "end_turn",
+    "session_id": "4fcafbe6-6fac-4bc2-813c-35fc908ba317",
+    "total_cost_usd": 0.06424479999999999,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 12780,
+      "cache_read_input_tokens": 6708,
+      "output_tokens": 1245,
+      "output_tokens_details": {
+        "thinking_tokens": 577
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 12780,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1245,
+          "cache_read_input_tokens": 6708,
+          "cache_creation_input_tokens": 12780,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 12780
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1245,
+        "cacheReadInputTokens": 6708,
+        "cacheCreationInputTokens": 12780,
+        "webSearchRequests": 0,
+        "costUSD": 0.06424479999999999,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 577,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two defects, both at `backend/src/InvoiceApp.Domain/DiscountCalculator.cs:16`. I only had the diff, so I didn't run anything or check the existing tests.\n\n**1. The change makes every price one cent higher in many cases (confidence: high).**\n- `MidpointRounding.ToZero` truncates every value. It doesn't only change how exact midpoints (e.g. x.xx5) round.\n- The new code truncates the discount to 2 decimals, so the customer gets a smaller discount.\n- It then truncates the result again, which can round the price down.\n- Example: amount 10.99 with a 15% discount gives a discount of 1.6485.\n  - Old: 10.99 − 1.6485 = 9.3415, which rounds to **9.34**.\n  - New: the discount truncates to 1.64, so 10.99 − 1.64 = 9.35, which gives **9.35**.\n- The discount shrinks whenever its third decimal is non-zero, so the result is often a cent higher than before.\n- Unless a business rule asked for truncation, this is a regression. The diff gives no reason for it.\n- Existing tests that expect `AwayFromZero` results will probably fail. The diff doesn't touch tests, and AGENTS.md requires tests for every rule change.\n\n**2. The two rounding steps compound (confidence: medium-high).**\n- The discount is rounded and then the result is rounded again, and each step truncates in a different direction relative to the final price. Rounding the discount down pushes the price up, and truncating the result pushes the price down.\n- The net error is therefore hard to predict.\n- If the amount already has more than 2 decimals, the outer truncation changes it again.\n- A single rounding of `amount - discount` at the end, as in the old code, avoids this.\n\n**What to do**\n- If truncation is intended, add tests that pin the new expected values and explain the rule change.\n- If it isn't intended, revert to the original single `Math.Round(..., MidpointRounding.AwayFromZero)`.",
+    "ttft_ms": 7703,
+    "type": "result",
+    "duration_ms": 13009,
+    "uuid": "24d0c5a2-3e20-418e-a855-67c92488c972",
+    "ttft_stream_ms": 3018,
+    "time_to_request_ms": 135,
+    "first_content_frame_ms": 3018,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

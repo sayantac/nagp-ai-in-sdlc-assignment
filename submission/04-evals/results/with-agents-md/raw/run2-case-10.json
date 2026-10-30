@@ -1,0 +1,111 @@
+{
+  "label": "with-agents-md",
+  "run": 2,
+  "case": "case-10",
+  "context": "repo",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T15:16:30Z",
+  "wall_seconds": 15.3,
+  "exit_code": 0,
+  "cwd_mode": "repo",
+  "output": {
+    "duration_api_ms": 12795,
+    "stop_reason": "end_turn",
+    "session_id": "c9cc8d50-fc76-45d7-b23c-7897c860d139",
+    "total_cost_usd": 0.017893600000000003,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 700,
+      "cache_read_input_tokens": 39056,
+      "output_tokens": 1118,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 700,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 443,
+          "cache_read_input_tokens": 19528,
+          "cache_creation_input_tokens": 700,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 700
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 1118,
+        "cacheReadInputTokens": 39056,
+        "cacheCreationInputTokens": 700,
+        "webSearchRequests": 0,
+        "costUSD": 0.017893600000000003,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 2,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found a high-severity defect in this diff, and I reported it with the findings tool.\n\n1. **`ApiControllerBase.cs:30`: the new catch-all reports failures as successes (confidence: high).**\n   - `catch (Exception)` returns `Ok(new { status = \"completed\" })`, so any unexpected error reaches the client as HTTP 200. The exception is also swallowed without logging.\n   - For example, a `NullReferenceException` or a repository fault during Approve or Reject would show the user \"completed\" even though the invoice state may not have changed. Monitoring would never see a 500 and there would be no log entry to investigate.\n   - Retrying clients may stop retrying after a false success. Clients that do retry may repeat a side effect that already happened.\n   - The made-up `{status:\"completed\"}` body also doesn't match what `Ok(action())` normally returns.\n   - The fix is to remove the catch. Unhandled exceptions will then produce ASP.NET's default 500, or you can log the exception and return `StatusCode(500, ...)`.\n\n2. **`ApiControllerBase.cs:30`: no test covers the new branch (confidence: high).**\n   - AGENTS.md says every new rule or endpoint needs tests. Nothing would catch this false-success behavior, or a later fix to it.\n\nI found no other defects in the diff.",
+    "ttft_ms": 8636,
+    "type": "result",
+    "duration_ms": 13099,
+    "uuid": "afa9d5f9-17de-4e43-aa64-0b95172cdcf1",
+    "ttft_stream_ms": 3581,
+    "time_to_request_ms": 136,
+    "first_content_frame_ms": 3581,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}
