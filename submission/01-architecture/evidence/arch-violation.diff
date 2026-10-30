@@ -1,0 +1,27 @@
+diff --git a/backend/src/InvoiceApp.Domain/ArchViolationDemo.cs b/backend/src/InvoiceApp.Domain/ArchViolationDemo.cs
+new file mode 100644
+index 0000000..ad0efdf
+--- /dev/null
++++ b/backend/src/InvoiceApp.Domain/ArchViolationDemo.cs
+@@ -0,0 +1,9 @@
++using Microsoft.AspNetCore.Http;
++
++namespace InvoiceApp.Domain;
++
++// DELIBERATE VIOLATION for the architecture-test demo. Removed automatically.
++public static class ArchViolationDemo
++{
++    public static IResult Approved() => Results.Ok();
++}
+diff --git a/backend/src/InvoiceApp.Domain/InvoiceApp.Domain.csproj b/backend/src/InvoiceApp.Domain/InvoiceApp.Domain.csproj
+index bfa77a1..dbbd017 100644
+--- a/backend/src/InvoiceApp.Domain/InvoiceApp.Domain.csproj
++++ b/backend/src/InvoiceApp.Domain/InvoiceApp.Domain.csproj
+@@ -4,4 +4,7 @@
+     <Nullable>enable</Nullable>
+     <ImplicitUsings>enable</ImplicitUsings>
+   </PropertyGroup>
++  <ItemGroup>
++    <FrameworkReference Include="Microsoft.AspNetCore.App" />
++  </ItemGroup>
+ </Project>
