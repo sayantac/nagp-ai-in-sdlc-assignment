@@ -1,13 +1,13 @@
 case,expected,defect_description,location,shown_in_session,notes
-case-01,,,,,
-case-02,,,,,
-case-03,,,,,
-case-04,,,,,
-case-05,,,,,
-case-06,,,,,
-case-07,,,,,
-case-08,,,,,
-case-09,,,,,
-case-10,,,,,
-case-11,,,,no,added: real defect
-case-12,clean,,,no,added: clean change
+case-01,defect,"BulkApprove loops over request.Ids, which is nullable, with no null check: a body without Ids throws NullReferenceException (500). Approve() is also called outside Handle(), so an unknown or non-pending id throws mid-loop after earlier invoices are already approved: partial commit and the caller gets an error with no list of what succeeded.",ApprovalsController.cs BulkApprove foreach loop,no,"high. Either reason (null Ids, or partial commit / unhandled exception) counts as caught"
+case-02,defect,"Search builds SQL by interpolating the customer and status query values into the string: SQL injection, e.g. customer = ' OR 1=1 --",InvoicesController.cs Search (both sql lines),no,high
+case-03,defect,"Apply now truncates the discount (MidpointRounding.ToZero) and the result (ToZero): rounding mode silently changed from AwayFromZero and rounded twice. Example: amount 10.00 at 10.06% gives 8.99 before and 9.00 after, so the customer is charged up to a cent more.",DiscountCalculator.cs Apply return statement,no,"medium. Judgment call: could be argued as intentional, but it is an unannounced money behaviour change. Caught only if the review names the rounding change"
+case-04,clean,,ApprovalService.cs,no,"high. Pure rename of _repository to _invoices, applied consistently in all 6 places"
+case-05,defect,"Delete endpoint has no [RequireRole('Admin')], unlike the Update endpoint beside it: any signed-in user can delete invoices.",InvoicesController.cs Delete,no,high
+case-06,clean,,ApprovalServiceTests.cs,no,"medium-high. Adds three tests only; each asserts behaviour that matches ApprovalService (whitespace reason throws ArgumentException, unknown id throws KeyNotFoundException, approver and time recorded)"
+case-07,defect,"Approve logs the whole invoice object and the whole CurrentUser session ({@Invoice}, {@Session}) at Information: customer data and session details, possibly the bearer token, end up in application logs.",ApprovalsController.cs Approve LogInformation call,no,"medium-high. Caught if the review names sensitive data or session details in logs"
+case-08,defect,"ConcurrentDictionary replaced by Dictionary in a repository that is registered as a singleton and shared across concurrent requests: concurrent Add/Update can corrupt the dictionary or throw. ContainsKey then set in Add is also a check-then-act race.",InMemoryInvoiceRepository.cs field declaration and Add,no,high
+case-09,defect,"README says 'sign out and sign in again' resets the sample data. It does not: login and logout only create and remove sessions (AuthController.cs), invoices are untouched. README also says the demo accounts live in the in-memory store; they come from appsettings.json.",README.md added paragraph,no,"low-medium. Judgment call: docs-only change, but the reset claim is checkably false. Caught only if the review names the false reset claim. The appsettings change is harmless"
+case-10,defect,"New catch (Exception) returns 200 OK with { status: 'completed' } for any unexpected failure: a failed action is reported as success and the error is swallowed with no logging.",ApiControllerBase.cs Handle catch (Exception),no,high
+case-11,defect,TODO: fill in when the case is created,,no,added case
+case-12,clean,,,no,added case
