@@ -1,0 +1,65 @@
+%% Sequence diagrams do not support classDef. Planned participants carry " (NEW)" in the label and sit in the dashed-label box.
+sequenceDiagram
+  participant A1 as Browser user
+  participant C14 as UI script
+  participant C3 as SessionAuthMiddleware
+  participant C4 as SessionStore
+  participant C6 as AuthController
+  participant C18 as DemoUser (config)
+  participant C19 as UserSession
+  participant C7 as InvoicesController
+  participant C5 as RequireRole filter
+  participant C8 as ApprovalsController
+  participant C10 as ApprovalService
+  participant C15 as Invoice
+  participant C11 as IInvoiceRepository
+  box rgba(150,150,150,0.15) Planned, not built (NEW). Solid participants above exist today.
+  participant C21 as Azure SQL repository (NEW)
+  participant C22 as Azure SQL database (NEW)
+  participant C25 as Outbox worker (NEW)
+  participant C27 as Concurrency cap and circuit breaker (NEW)
+  participant C26 as PayEx client (NEW)
+  participant A2 as PayEx (NEW)
+  participant C29 as Alerts (NEW)
+  end
+  A1->>C14: sign in
+  C14->>C6: S1: POST /api/auth/login (middleware skips this path)
+  C6->>C18: S2: username and password matched to configured users, 401 if none
+  C6->>C19: S3: new UserSession(username, role), role copied from DemoUser
+  C6->>C4: S4: session created
+  C14->>C3: S5: POST /api/invoices/id/submit with Bearer token
+  C3->>C4: S6: token lookup, 401 if no session
+  C3->>C7: S7: any signed-in role may submit
+  Note over C3,C7: Framework routing between middleware and controller omitted
+  C7->>C10: S8: Submit(id) via Handle
+  C10->>C11: S9: invoice must be Draft else 409, set PendingApproval, Update
+  C14->>C3: S10: POST /api/approvals/id/approve or reject
+  C3->>C4: S11: token validation, 401 if invalid
+  C3->>C5: S12: role must be Approver or Admin else 403
+  C5->>C8: S13: allowed
+  C8->>C10: S14: Approve(id, username) or Reject(id, username, reason)
+  C10->>C10: S15: blank reject reason throws, mapped to 400
+  C10->>C11: S16: invoice must be PendingApproval else 409, 404 if missing
+  C10->>C15: S17: set Status Approved or Rejected, DecidedBy, DecidedAt, DecisionNote
+  C10->>C11: S18: Update(invoice)
+  C11->>C21: S21: Update is served by the Azure SQL repository (NEW)
+  Note over C21,C22: One SQL transaction on approval
+  C21->>C22: S22: update invoice status
+  C21->>C22: S23: INSERT append-only audit event
+  C21->>C22: S24: INSERT outbox row, state Pending, unique per invoice
+  C21->>C22: S25: COMMIT
+  C8-->>C14: S20: 200 with invoice JSON
+  Note over C8,C25: Approval returns here. Submission to PayEx happens later in the worker.
+  C25->>C22: S26: claim Pending row, set Submitting, lease longer than client timeout plus margin
+  C25->>C27: S27: call passes the concurrency cap and circuit breaker
+  C25->>C26: S28: submit invoice
+  C26->>A2: S29: send with invoice Id as idempotency key, client timeout set in configuration to at least 30 s
+  alt Success
+    A2-->>C26: S30: returns a reference
+    C25->>C22: S31: row Submitting to Submitted
+  else PayEx timeout
+    A2--xC26: S32: no response within the timeout, outcome unknown
+    C25->>C22: S33: row Submitting to InDoubt (not Failed), with reason code
+    C25->>C29: S34: InDoubt count and PayEx timeout rate feed alerts
+    Note over C25,C29: A person resolves the row by lookup or by a retry with the same key. Never a bulk reset to Pending.
+  end

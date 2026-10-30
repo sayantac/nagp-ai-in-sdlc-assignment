@@ -1,0 +1,72 @@
+flowchart LR
+  A1["A1 Browser user"]
+  subgraph C1["C1 API host (ASP.NET Core, one process)"]
+    C2["C2 Static web UI"]
+    C14["C14 UI script app.js"]
+    C3["C3 SessionAuthMiddleware"]
+    C4["C4 SessionStore (in-memory)"]
+    C5["C5 RequireRole filter"]
+    C6["C6 AuthController"]
+    C7["C7 InvoicesController"]
+    C8["C8 ApprovalsController"]
+    C9["C9 ApiControllerBase"]
+    C13["C13 Demo user config"]
+    C10["C10 ApprovalService (Domain)"]
+    C11["C11 IInvoiceRepository (Domain)"]
+    C12["C12 InMemoryInvoiceRepository"]
+    C15["C15 Invoice entity (Status, DecidedBy, DecidedAt, DecisionNote)"]
+    C16["C16 InvoiceStatus: Draft, PendingApproval, Approved, Rejected"]
+    C17["C17 appsettings.json Users: demo.approver is Approver, demo.admin is Admin"]
+    C18["C18 DemoUser (Username, Password, Role)"]
+    C19["C19 UserSession (Username, Role)"]
+    C20["C20 index.html"]
+    C21["C21 Azure SQL repository (NEW)"]:::planned
+    C25["C25 Outbox worker, lease claim (NEW)"]:::planned
+    C26["C26 PayEx client, explicit timeout of at least 30 s (NEW)"]:::planned
+    C27["C27 Concurrency cap and circuit breaker (NEW)"]:::planned
+    C28["C28 Worker kill switch (NEW)"]:::planned
+    C29["C29 Alerts: oldest pending age, InDoubt count, PayEx timeout rate (NEW)"]:::planned
+  end
+  A2["A2 PayEx, external payment provider (NEW)"]:::planned
+  C22["C22 Azure SQL database (NEW)"]:::planned
+  C23["C23 Audit events table, INSERT-only (NEW)"]:::planned
+  C24["C24 Outbox table, one row per invoice, states Pending, Submitting, Submitted, Failed, InDoubt (NEW)"]:::planned
+  C30["C30 Nightly reconciliation, follow-up not go-live (NEW)"]:::planned
+  LGSOLID["Legend: solid border and solid arrow = exists in code today"]
+  LGDASH["Legend: dashed border and dashed arrow = planned, not built (NEW)"]:::planned
+  A1 -->|"E1: loads static page"| C2
+  C14 -->|"E2: fetch /api with Bearer token"| C1
+  C1 -->|"E3: middleware pipeline"| C3
+  C3 -->|"E4: looks up token"| C4
+  C3 -->|"E5: session in HttpContext.Items"| C5
+  C1 -->|"E6: MapControllers"| C6 & C7 & C8
+  C6 -->|"E7: credential match"| C13
+  C6 -->|"E8: Create / Remove session"| C4
+  C7 & C8 -->|"E9: injected ApprovalService"| C10
+  C7 -->|"E10: direct repository use"| C11
+  C7 & C8 -->|"E11: inherit and call Handle"| C9
+  C10 -->|"E12: GetById / Update"| C11
+  C11 -->|"E13: DI singleton"| C12
+  C1 -->|"E14: DI scoped"| C10
+  C13 -->|"E15: root configuration binds Users"| C17
+  C13 -->|"E16: holds list of DemoUser"| C18
+  C6 -->|"E17: builds UserSession, role copied from DemoUser"| C19
+  C5 -->|"E18: reads session role"| C19
+  C10 -->|"E19: sets status and decision fields"| C15
+  C15 -->|"E20: Status typed"| C16
+  C12 -->|"E21: holds invoices"| C15
+  C2 -->|"E22: serves page"| C20
+  C20 -->|"E23: script include"| C14
+  C21 -.->|"E24: implements"| C11
+  C21 -.->|"E25: one SQL transaction: status, audit event, outbox row"| C22
+  C22 -.->|"E26: holds, application role has INSERT only"| C23
+  C22 -.->|"E27: holds"| C24
+  C25 -.->|"E28: claims rows with a lease"| C22
+  C25 -.->|"E29: sends invoice Id"| C26
+  C26 -.->|"E30: submits with invoice Id as idempotency key"| A2
+  C25 -.->|"E31: calls guarded by"| C27
+  C28 -.->|"E32: can stop"| C25
+  C25 -.->|"E33: raises"| C29
+  C30 -.->|"E34: compares with PayEx"| A2
+  C30 -.->|"E35: reads rows, skips in flight"| C22
+  classDef planned stroke-dasharray: 5 5

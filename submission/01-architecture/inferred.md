@@ -55,3 +55,14 @@ These are read from the code by the cartographer subagent, and I re-read the cit
 | 2 | The repository mutates the object it hands out. `GetById` returns the stored `Invoice` instance, `ApprovalService` changes its fields in place, and `Update` then writes the same instance back. The status change is visible to anyone holding the reference before `Update` runs, and `Update` does not make the change atomic. The `lock` covers only the list operations. `GetAll` copies the list but returns the same `Invoice` objects. | `backend/src/InvoiceApp.Api/InMemoryInvoiceRepository.cs:27` (`GetById`), `:22` (`GetAll`), `:50-56` (`Update`); `backend/src/InvoiceApp.Domain/ApprovalService.cs:36-39` (fields set, then `Update`) |
 
 Checked: `ApprovalsController.cs:22-23` passes only the signed-in `Username` as the approver, with no submitter comparison, and any signed-in user, including an Approver, can submit (section 1, item 5). Observation 1 is confirmed. Observation 2 depends on `InMemoryInvoiceRepository` being registered as a singleton (`Program.cs:14`) and `ApprovalService` as scoped (`Program.cs:15`), as recorded in citations E13 and E14.
+
+## 5. Target-state assumptions (the ADR is silent)
+
+Each row is an assumption made while drawing `target-container.mmd` and `target-sequence.mmd`. None is a decision. `ADR-001-exactly-once-payex.md` does not settle them; the ADR owner decides.
+
+| # | Assumption (not a decision) | Where it shows | What the ADR says | Needs deciding |
+|---|---|---|---|---|
+| 1 | The worker (C25) reads and writes outbox rows directly in the database (E28 to C22), not through `IInvoiceRepository` (C11) | `target-container.mmd` E28; `target-sequence.mmd` S26 | Only that a worker claims rows with a lease (Decision) | Whether outbox access goes through C11 or a separate abstraction |
+| 2 | The Azure SQL repository (C21) is drawn beside `InMemoryInvoiceRepository` (C12), both implementing C11 (E24, E13). Whether C21 replaces C12 in DI is not specified | `target-container.mmd` E13, E24 | Only that Azure SQL persistence is a prerequisite, scoped separately (Decision) | DI registration in `Program.cs`, and whether C12 stays for dev and tests |
+| 3 | The sequence diagram marks planned participants with `(NEW)` labels and a grey box instead of dashed styling, because Mermaid sequence diagrams do not support `classDef`. This is a drawing limit, not a design choice | `target-sequence.mmd` | Not applicable | Nothing, unless a different notation is wanted |
+| 4 | The Failed branch (other 4xx responses, with an alert) and the runbook are not drawn. The sequence shows only the success and PayEx-timeout paths, and the runbook is a document, not a system element | `target-sequence.mmd`, `target-container.mmd` | Other 4xx go to Failed and raise an alert; the runbook is a go-live blocker (Decision) | Whether a Failed branch should be added to the diagrams |

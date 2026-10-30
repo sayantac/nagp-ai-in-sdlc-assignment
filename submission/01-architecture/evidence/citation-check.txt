@@ -1,6 +1,6 @@
-# citation check 2026-10-30T11:41:46Z
-# diagrams: as-built-container.mmd, as-built-sequence.mmd
-# rows: 64  ids used: 64  failures: 0
+# citation check 2026-10-30T15:49:30Z
+# diagrams: as-built-container.mmd, as-built-sequence.mmd, target-container.mmd, target-sequence.mmd
+# rows: 101  ids used: 101  failures: 0
 
 ok-checked C1    backend/src/InvoiceApp.Api/Program.cs :: WebApplication
 ok-checked C2    backend/src/InvoiceApp.Api/Program.cs :: UseStaticFiles
@@ -66,3 +66,40 @@ ok-checked S17   backend/src/InvoiceApp.Domain/ApprovalService.cs :: DecidedBy
 ok-checked S18   backend/src/InvoiceApp.Domain/ApprovalService.cs :: Update
 ok-checked S19   backend/src/InvoiceApp.Api/InMemoryInvoiceRepository.cs :: Update
 ok-checked S20   backend/src/InvoiceApp.Api/Controllers/ApiControllerBase.cs :: Ok
+ok-checked A2    submission/SCENARIO.md :: PayEx
+ok-checked C21   submission/02-adr/ADR-001-exactly-once-payex.md :: Azure SQL
+ok-checked C22   submission/SCENARIO.md :: Azure SQL
+ok-checked C23   submission/02-adr/ADR-001-exactly-once-payex.md :: append-only
+ok-checked C24   submission/02-adr/ADR-001-exactly-once-payex.md :: outbox
+ok-checked C25   submission/02-adr/ADR-001-exactly-once-payex.md :: lease
+ok-checked C26   submission/02-adr/ADR-001-exactly-once-payex.md :: client timeout
+ok-checked C27   submission/02-adr/ADR-001-exactly-once-payex.md :: circuit breaker
+ok-checked C28   submission/02-adr/ADR-001-exactly-once-payex.md :: kill switch
+ok-checked C29   submission/02-adr/ADR-001-exactly-once-payex.md :: alerts
+ok-checked C30   submission/02-adr/ADR-001-exactly-once-payex.md :: reconciliation
+ok-checked E24   submission/02-adr/ADR-001-exactly-once-payex.md :: Azure SQL
+ok-checked E25   submission/02-adr/ADR-001-exactly-once-payex.md :: transaction
+ok-checked E26   submission/02-adr/ADR-001-exactly-once-payex.md :: INSERT-only
+ok-checked E27   submission/02-adr/ADR-001-exactly-once-payex.md :: outbox
+ok-checked E28   submission/02-adr/ADR-001-exactly-once-payex.md :: claims
+ok-checked E29   submission/02-adr/ADR-001-exactly-once-payex.md :: worker
+ok-checked E30   submission/02-adr/ADR-001-exactly-once-payex.md :: idempotency
+ok-checked E31   submission/02-adr/ADR-001-exactly-once-payex.md :: circuit breaker
+ok-checked E32   submission/02-adr/ADR-001-exactly-once-payex.md :: kill switch
+ok-checked E33   submission/02-adr/ADR-001-exactly-once-payex.md :: alerts
+ok-checked E34   submission/02-adr/ADR-001-exactly-once-payex.md :: reconciliation
+ok-checked E35   submission/02-adr/ADR-001-exactly-once-payex.md :: in
+ok-checked S21   submission/02-adr/ADR-001-exactly-once-payex.md :: Azure SQL
+ok-checked S22   submission/02-adr/ADR-001-exactly-once-payex.md :: status
+ok-checked S23   submission/02-adr/ADR-001-exactly-once-payex.md :: audit
+ok-checked S24   submission/02-adr/ADR-001-exactly-once-payex.md :: unique
+ok-checked S25   submission/02-adr/ADR-001-exactly-once-payex.md :: transaction
+ok-checked S26   submission/02-adr/ADR-001-exactly-once-payex.md :: lease
+ok-checked S27   submission/02-adr/ADR-001-exactly-once-payex.md :: circuit breaker
+ok-checked S28   submission/02-adr/ADR-001-exactly-once-payex.md :: worker
+ok-checked S29   submission/02-adr/ADR-001-exactly-once-payex.md :: idempotency
+ok-checked S30   submission/SCENARIO.md :: reference
+ok-checked S31   submission/02-adr/ADR-001-exactly-once-payex.md :: Submitted
+ok-checked S32   submission/SCENARIO.md :: timeout
+ok-checked S33   submission/02-adr/ADR-001-exactly-once-payex.md :: InDoubt
+ok-checked S34   submission/02-adr/ADR-001-exactly-once-payex.md :: InDoubt

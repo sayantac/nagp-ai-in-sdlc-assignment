@@ -79,3 +79,40 @@ New elements cite the ADR section or the scenario fact that requires them. Eleme
 
 | ID | Element | Path | Symbol | Line |
 |---|---|---|---|---|
+| A2 | PayEx (NEW) | `submission/SCENARIO.md` | `PayEx` | 14 |
+| C21 | Azure SQL repository (NEW). ADR Decision: Azure SQL persistence is a prerequisite | `submission/02-adr/ADR-001-exactly-once-payex.md` | `Azure SQL` | 44 |
+| C22 | Azure SQL database (NEW). SCENARIO Platform row | `submission/SCENARIO.md` | `Azure SQL` | 10 |
+| C23 | Audit events table, INSERT-only (NEW). ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `append-only` | 38 |
+| C24 | Outbox table (NEW). ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `outbox` | 38 |
+| C25 | Outbox worker (NEW). ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `lease` | 39 |
+| C26 | PayEx client with explicit timeout (NEW). ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `client timeout` | 39 |
+| C27 | Concurrency cap and circuit breaker (NEW). ADR Decision go-live safeguards | `submission/02-adr/ADR-001-exactly-once-payex.md` | `circuit breaker` | 43 |
+| C28 | Worker kill switch (NEW). ADR Decision go-live safeguards | `submission/02-adr/ADR-001-exactly-once-payex.md` | `kill switch` | 43 |
+| C29 | Alerts (NEW). ADR Decision go-live safeguards | `submission/02-adr/ADR-001-exactly-once-payex.md` | `alerts` | 43 |
+| C30 | Nightly reconciliation (NEW, follow-up). ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `reconciliation` | 42 |
+| E24 | C21 implements C11. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `Azure SQL` | 44 |
+| E25 | C21 to C22 one SQL transaction. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `transaction` | 38 |
+| E26 | C22 holds C23, INSERT only. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `INSERT-only` | 38 |
+| E27 | C22 holds C24. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `outbox` | 38 |
+| E28 | C25 claims rows in C22. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `claims` | 39 |
+| E29 | C25 to C26 sends invoice. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `worker` | 40 |
+| E30 | C26 to A2 idempotency key. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `idempotency` | 40 |
+| E31 | C25 guarded by C27. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `circuit breaker` | 43 |
+| E32 | C28 stops C25. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `kill switch` | 43 |
+| E33 | C25 raises C29. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `alerts` | 43 |
+| E34 | C30 compares with A2. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `reconciliation` | 42 |
+| E35 | C30 reads C22, skips in-flight rows. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `in` | 42 |
+| S21 | Update served by C21. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `Azure SQL` | 44 |
+| S22 | Status update in the approval transaction. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `status` | 38 |
+| S23 | Append-only audit event in the approval transaction. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `audit` | 38 |
+| S24 | Outbox row, unique per invoice. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `unique` | 38 |
+| S25 | Commit of the one SQL transaction. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `transaction` | 38 |
+| S26 | Claim with lease longer than client timeout. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `lease` | 39 |
+| S27 | Concurrency cap and circuit breaker. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `circuit breaker` | 43 |
+| S28 | Worker submits invoice. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `worker` | 40 |
+| S29 | Invoice Id as idempotency key; timeout at least 30 s. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `idempotency` | 40 |
+| S30 | PayEx returns a reference on success. SCENARIO PayEx row | `submission/SCENARIO.md` | `reference` | 14 |
+| S31 | Row to Submitted. ADR Decision States | `submission/02-adr/ADR-001-exactly-once-payex.md` | `Submitted` | 41 |
+| S32 | Timeout, outcome unknown. SCENARIO PayEx row | `submission/SCENARIO.md` | `timeout` | 14 |
+| S33 | Timeout goes to InDoubt with reason code. ADR Decision States | `submission/02-adr/ADR-001-exactly-once-payex.md` | `InDoubt` | 41 |
+| S34 | InDoubt count and timeout rate alerts. ADR Decision | `submission/02-adr/ADR-001-exactly-once-payex.md` | `InDoubt` | 43 |
