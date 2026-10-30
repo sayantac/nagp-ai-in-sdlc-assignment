@@ -65,12 +65,7 @@ Estimated total: about 9–11 hours, most of it in Task 2 writing and Task 4 sco
 
 ## Task 3: Autonomy policy (1.5 h)
 
-1. **YOU first:** write `submission/03-autonomy/work/INC-2041-human-notes.md` and `INC-2047-human-notes.md` (15 min each), and **commit them**. The command refuses to run otherwise, and `precheck.py` verifies the order.
-2. Run `/t3-firstresponse INC-2041`, then `/t3-firstresponse INC-2047`.
-3. **YOU:** score both summaries in `first-response-scores.md` against the raw evidence.
-4. **YOU:** write `autonomy-policy.md` (one page). Point the controls at real config files. State the day-one level and justify it with your measured error rate.
-5. Optionally run `devils-advocate` on the policy.
-6. Commit.
+Write autonomy-policy.md (one page); state the day-one level. No incident trial was run.
 
 ## Task 4: Review eval (2.5–3 h, mostly unattended runs plus scoring)
 

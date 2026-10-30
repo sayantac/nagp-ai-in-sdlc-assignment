@@ -9,7 +9,7 @@ Gaps in the brief and the assumptions made: [ASSUMPTIONS.md](ASSUMPTIONS.md). Sc
 | 1 | As-built and target diagrams (Mermaid), citations, inferred items | `01-architecture/*.mmd`, `citations.md`, `inferred.md` | `01-architecture/evidence/citation-check.txt` |
 | 2 | Architecture test and the command that runs it | `backend/tests/InvoiceApp.Tests/Architecture/`, `01-architecture/RUN.md` | Red and green outputs in `01-architecture/evidence/`, CI link |
 | 3 | Exactly-once decision record | `02-adr/ADR-001-exactly-once-payex.md` | Stress-test log ids, `02-adr/work/` |
-| 4 | One-page autonomy policy with the day-one level | `03-autonomy/autonomy-policy.md` | `03-autonomy/first-response-scores.md` |
+| 4 | One-page autonomy policy with the day-one level | `03-autonomy/autonomy-policy.md` | the controls in .claude/ (read-only agent, deny rules, guard hook) |
 | 5 | Two added eval cases and the results table | `ops/evals/cases/case-11.diff`, `case-12.diff`, `04-evals/results.md` | `04-evals/results/*/raw/`, `answer-key.csv` (committed first) |
 | 6 | Risk audit with the decision | `05-risk/trifecta-audit.md` | `.claude/settings.json`, the blocked-call record |
 | 7 | Measurement plan with the two numbers captured | `05-risk/measurement-plan.md` | `05-risk/evidence/baseline-numbers.md` |

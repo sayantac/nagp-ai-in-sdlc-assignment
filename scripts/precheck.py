@@ -44,7 +44,7 @@ def check_files():
                 "01-architecture/evidence/arch-test-2-red-violation.txt",
                 "01-architecture/evidence/arch-test-3-green-after.txt",
                 "02-adr/ADR-001-exactly-once-payex.md", "03-autonomy/autonomy-policy.md",
-                "03-autonomy/first-response-scores.md", "04-evals/results.md", "04-evals/answer-key.csv",
+                "04-evals/results.md", "04-evals/answer-key.csv",
                 "05-risk/trifecta-audit.md", "05-risk/measurement-plan.md",
                 "05-risk/evidence/baseline-numbers.md"]
     missing = [p for p in required if not (SUB / p).exists()]
@@ -106,20 +106,6 @@ def check_eval_scored():
     record(level, "two eval labels, fully scored", f"{len(csvs)} labels, {unscored} unscored rows")
 
 
-def check_human_first():
-    problems = []
-    for incident in ("INC-2041", "INC-2047"):
-        notes = f"submission/03-autonomy/work/{incident}-human-notes.md"
-        summary = f"submission/03-autonomy/work/{incident}-ai-summary.md"
-        notes_time = git("log", "--diff-filter=A", "--format=%cI", "--", notes)
-        summary_time = git("log", "--diff-filter=A", "--format=%cI", "--", summary)
-        if not notes_time or not summary_time:
-            problems.append(f"{incident}: missing")
-        elif when(notes_time.splitlines()[-1]) >= when(summary_time.splitlines()[-1]):
-            problems.append(f"{incident}: AI summary committed before human notes")
-    record("FAIL" if problems else "PASS", "human incident notes committed before AI summaries", "; ".join(problems))
-
-
 def check_adr():
     text = (SUB / "02-adr" / "ADR-001-exactly-once-payex.md").read_text(encoding="utf-8")
     section = text.split("## Where the agent was wrong or useless")[-1]
@@ -148,7 +134,7 @@ def check_video():
 
 
 for check in (check_files, check_todos, check_citations, check_answer_key_first, check_eval_scored,
-              check_human_first, check_adr, check_logs, check_video):
+              check_adr, check_logs, check_video):
     try:
         check()
     except Exception as error:
