@@ -4,14 +4,15 @@
       "WebFetch",
       "WebSearch",
       "mcp__playwright",
+      "mcp__claude_ai_Mermaid_Chart",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(gh:*)",
       "Read(./.env)",
       "Read(./**/.env)"
     ],
     "ask": [
-      "Bash(git push:*)",
-      "Bash(curl:*)",
-      "Bash(wget:*)",
-      "Bash(gh:*)"
+      "Bash(git push:*)"
     ]
   },
   "hooks": {
