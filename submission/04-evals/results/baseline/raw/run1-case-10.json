@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 1,
+  "case": "case-10",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:54:26Z",
+  "wall_seconds": 10.8,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 9180,
+    "stop_reason": "end_turn",
+    "session_id": "507d1891-4809-483d-bdb5-fb55091f28c6",
+    "total_cost_usd": 0.0548212,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 11102,
+      "cache_read_input_tokens": 24052,
+      "output_tokens": 800,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 11102,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 348,
+          "cache_read_input_tokens": 17342,
+          "cache_creation_input_tokens": 470,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 470
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 800,
+        "cacheReadInputTokens": 24052,
+        "cacheCreationInputTokens": 11102,
+        "webSearchRequests": 0,
+        "costUSD": 0.0548212,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 2,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found one defect in this diff, and I'm confident it's a real bug.\n\n**`backend/src/InvoiceApp.Api/Controllers/ApiControllerBase.cs:30`**: the new `catch (Exception)` returns `Ok(new { status = \"completed\" })`, so an unexpected failure looks like a success.\n\n- **What goes wrong:** Any exception not already handled above it, such as a `NullReferenceException`, `DbUpdateException` or timeout, now returns HTTP 200 with `{status:\"completed\"}`. The exception is also dropped without being logged.\n- **Example:** An invoice create or payment fails while saving. The client is told it succeeded, but nothing was persisted. The data and the client's view of it no longer match, and there is no 5xx for monitoring to catch and no log entry to explain it.\n- **Fix:** Remove the catch so errors reach the exception middleware and return 500. Alternatively, log the exception and return `StatusCode(500, ...)` or `Problem(...)`.\n- **Confidence:** High.",
+    "ttft_ms": 4963,
+    "type": "result",
+    "duration_ms": 9243,
+    "uuid": "a5b3fc02-ce40-4297-a3d2-e5f3e0aceec6",
+    "ttft_stream_ms": 1578,
+    "time_to_request_ms": 46,
+    "first_content_frame_ms": 1579,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

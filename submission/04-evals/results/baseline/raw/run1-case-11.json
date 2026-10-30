@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 1,
+  "case": "case-11",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:54:37Z",
+  "wall_seconds": 13.3,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 11764,
+    "stop_reason": "end_turn",
+    "session_id": "1c664d20-2334-41e9-aa81-1e72d7d40e55",
+    "total_cost_usd": 0.058447,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 10923,
+      "cache_read_input_tokens": 6710,
+      "output_tokens": 1408,
+      "output_tokens_details": {
+        "thinking_tokens": 666
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 10923,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1408,
+          "cache_read_input_tokens": 6710,
+          "cache_creation_input_tokens": 10923,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 10923
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1408,
+        "cacheReadInputTokens": 6710,
+        "cacheCreationInputTokens": 10923,
+        "webSearchRequests": 0,
+        "costUSD": 0.058447,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 666,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found one likely defect and one lower-confidence concern.\n\n**1. `backend/src/InvoiceApp.Api/Clients/PayExSubmitter.cs:28`: retrying a timed-out submission can pay the invoice twice. Confidence: medium-high.**\n- **What goes wrong:** A timeout doesn't mean PayEx didn't process the request. The comment on line 30 says PayEx gives up after 30 seconds, so the client may time out while PayEx is still working or has already committed. The catch then calls `_payEx.SubmitAsync(invoice, ct)` again (line 25) with nothing to deduplicate the two requests.\n- **Failure scenario:** PayEx accepts and records the payment but responds slowly. The first attempt throws `TimeoutException`, and the retry submits the same invoice again. PayEx creates a second payment, and the caller only sees the second reference.\n- **Fix:** Pass an idempotency key, for example one derived from `invoice.Id`, if `IPayExClient` or PayEx supports it. Otherwise, look up the existing payment by invoice ID before resubmitting. If neither is possible, don't retry on timeout.\n- **Caveat:** Whether this bites depends on PayEx's API semantics, which the diff doesn't show. If PayEx already dedupes by invoice ID, this is fine.\n\n**2. `PayExSubmitter.cs:28`: the catch may never fire, depending on `IPayExClient`. Confidence: low.**\n- **What goes wrong:** If `IPayExClient` wraps `HttpClient`, a request timeout usually surfaces as `TaskCanceledException`. In .NET 5 and later, its inner exception is a `TimeoutException`. It doesn't surface as `TimeoutException` itself. In that case the filter never matches, and the first timeout propagates with no retry.\n- **How to check:** Look at what the client implementation actually throws. If it throws `TaskCanceledException`, the filter would also need to check that `ct.IsCancellationRequested` is false.\n\nI found nothing else. The loop compiles, since every path returns or throws. The final attempt rethrows because the `when` filter goes false. The backoff delay honors `ct`.",
+    "ttft_ms": 6571,
+    "type": "result",
+    "duration_ms": 11816,
+    "uuid": "022519a3-2e3e-4006-aa99-e9fc950f31ca",
+    "ttft_stream_ms": 2016,
+    "time_to_request_ms": 47,
+    "first_content_frame_ms": 2016,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

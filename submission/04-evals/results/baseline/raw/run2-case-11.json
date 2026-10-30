@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 2,
+  "case": "case-11",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:57:30Z",
+  "wall_seconds": 14.1,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 12277,
+    "stop_reason": "end_turn",
+    "session_id": "89f708ca-f4b4-41e0-9a21-6d3779e843a6",
+    "total_cost_usd": 0.0159173,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 17633,
+      "output_tokens": 1415,
+      "output_tokens_details": {
+        "thinking_tokens": 696
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1415,
+          "cache_read_input_tokens": 17633,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1415,
+        "cacheReadInputTokens": 17633,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0159173,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 696,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two defects, and a third item is minor.\n\n**1. `PayExSubmitter.cs:28`: retrying a payment submission after a timeout can pay the invoice twice.** Confidence: medium. It depends on whether `IPayExClient` sends an idempotency key, which this diff doesn't show.\n- A timeout doesn't mean PayEx didn't process the request. It only means no response arrived within 30 seconds.\n- The catch blocks resubmit the same invoice with nothing that lets PayEx deduplicate it. If PayEx processed the first attempt, the retry creates a second payment.\n- To fix it, pass a stable idempotency key such as the invoice ID or a per-invoice GUID on every attempt. Or query PayEx for an existing payment for the invoice before retrying. If PayEx supports neither, don't auto-retry non-idempotent submits.\n\n**2. `PayExSubmitter.cs:28`: the catch may never fire, because it only handles `TimeoutException`.** Confidence: low to medium. It depends on how `IPayExClient` is implemented.\n- `HttpClient` timeouts normally surface as `TaskCanceledException` (with a `TimeoutException` as the inner exception), not as `TimeoutException`.\n- If the client is a typed `HttpClient` wrapper that doesn't translate the exception, the retry never runs and the first timeout propagates.\n- The filter would need to also match `TaskCanceledException` when `!ct.IsCancellationRequested`, or you'd need to confirm the client throws `TimeoutException`.\n\n**3. `PayExSubmitter.cs:35`: the worst-case latency is long.** Confidence: high that it happens, low severity.\n- With a 30-second PayEx timeout, three attempts plus the 2-second and 4-second delays can block the caller for about 96 seconds.\n- That may exceed the upstream request or gateway timeout if this runs in the request path.\n- Consider an overall deadline, or moving the call to a background job.\n\nI found nothing else. The loop, the exception filter that lets the last attempt's exception propagate, and the cancellation handling in `Task.Delay` look correct.",
+    "ttft_ms": 7043,
+    "type": "result",
+    "duration_ms": 12360,
+    "uuid": "a9f22d8f-ef83-4370-adb3-a932fc5047fc",
+    "ttft_stream_ms": 2127,
+    "time_to_request_ms": 78,
+    "first_content_frame_ms": 2127,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

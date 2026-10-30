@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 3,
+  "case": "case-04",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:58:49Z",
+  "wall_seconds": 18.2,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 16614,
+    "stop_reason": "end_turn",
+    "session_id": "fe085f2b-aa15-4660-acc0-809f75dcdd5e",
+    "total_cost_usd": 0.0073542,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 17702,
+      "output_tokens": 558,
+      "output_tokens_details": {
+        "thinking_tokens": 264
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 558,
+          "cache_read_input_tokens": 17702,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 558,
+        "cacheReadInputTokens": 17702,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0073542,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 264,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff.\n\nIt is a pure rename of the field `_repository` to `_invoices`, plus the matching constructor parameter. The constructor assignment, all three `Update` calls and the `Find` helper are each renamed consistently. Behavior is unchanged: the same repository is called in the same order, with no change to status transitions, `DecidedBy`/`DecidedAt`, or the `KeyNotFoundException`.\n\nI could only see the hunks in the diff. A leftover `_repository` reference in an unshown part of the file would fail to compile, so the build would catch it. The unshown parts are roughly lines 19–24, 30–36 and 43–52, which hold the method signatures and guard clauses. Nothing in the diff suggests such a reference exists. The only caller-visible change would be if someone used named arguments (`repository: x`) on the constructor, and I can't check that from here.",
+    "ttft_ms": 14074,
+    "type": "result",
+    "duration_ms": 16661,
+    "uuid": "9d48ad5a-d2df-4103-a64d-399bc98bdfe6",
+    "ttft_stream_ms": 11492,
+    "time_to_request_ms": 45,
+    "first_content_frame_ms": 11493,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

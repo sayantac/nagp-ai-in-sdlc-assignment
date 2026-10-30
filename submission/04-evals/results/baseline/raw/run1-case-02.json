@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 1,
+  "case": "case-02",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:51:22Z",
+  "wall_seconds": 17.7,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 16081,
+    "stop_reason": "end_turn",
+    "session_id": "a9c56d72-20de-43c4-b6c5-68d290fa4fc6",
+    "total_cost_usd": 0.0683128,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 12014,
+      "cache_read_input_tokens": 24088,
+      "output_tokens": 1784,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 12014,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 482,
+          "cache_read_input_tokens": 17378,
+          "cache_creation_input_tokens": 1346,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1346
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 1784,
+        "cacheReadInputTokens": 24088,
+        "cacheCreationInputTokens": 12014,
+        "webSearchRequests": 0,
+        "costUSD": 0.0683128,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 2,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I reported five findings, two of them serious.\n\n**Confirmed (high confidence)**\n1. **`InvoicesController.cs:28`, SQL injection through `customer` (~99%).** The query parameter is interpolated straight into the SQL string. A request like `customer=' OR 1=1; DROP TABLE Invoices;--` lets an attacker read or destroy data. Use a parameterized query or the repository/ORM instead.\n2. **`InvoicesController.cs:32`, SQL injection through `status` (~99%).** The same problem applies to the `status` filter. For example, `status=' OR '1'='1` bypasses the customer filter and returns every invoice. Bind it as a parameter and validate it against the known status values.\n\n**Plausible (lower confidence)**\n3. **Line 25, `_queries` (~40%).** The diff doesn't show a `_queries` field or its injection, so this may not compile. If it does exist, the controller is executing raw SQL, which bypasses the `_repository` pattern the other actions use. I could only see the diff hunk, not the class header.\n4. **Line 26, `customer` isn't required or checked (~50%).** If implicit required handling is off, an omitted `customer` gives `LIKE '%%'`, which matches every row.\n5. **Line 28, unbounded query (~50%).** The leading-wildcard `LIKE` forces a full table scan, and there is no paging or limit. A short search term could return the whole table.",
+    "ttft_ms": 12046,
+    "type": "result",
+    "duration_ms": 16154,
+    "uuid": "d4251925-6508-4ae5-8113-5dedca0d4525",
+    "ttft_stream_ms": 3187,
+    "time_to_request_ms": 57,
+    "first_content_frame_ms": 3188,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

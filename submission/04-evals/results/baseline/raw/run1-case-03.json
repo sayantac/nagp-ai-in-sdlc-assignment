@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 1,
+  "case": "case-03",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:51:40Z",
+  "wall_seconds": 14.6,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 12439,
+    "stop_reason": "end_turn",
+    "session_id": "1f3621c3-ef5b-438a-afcb-53d55f7ede93",
+    "total_cost_usd": 0.058453000000000005,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 10592,
+      "cache_read_input_tokens": 6710,
+      "output_tokens": 1541,
+      "output_tokens_details": {
+        "thinking_tokens": 738
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 10592,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1541,
+          "cache_read_input_tokens": 6710,
+          "cache_creation_input_tokens": 10592,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 10592
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1541,
+        "cacheReadInputTokens": 6710,
+        "cacheCreationInputTokens": 10592,
+        "webSearchRequests": 0,
+        "costUSD": 0.058453000000000005,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 738,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "**Finding 1: Rounding change shifts totals by a cent** (confidence: high that behavior changes, medium that it's unintended)\n- **File and line:** `backend/src/InvoiceApp.Domain/DiscountCalculator.cs:16-17`\n- **What goes wrong:** `MidpointRounding.ToZero` is a directed mode, so it truncates every value, not just exact midpoints. The old code rounded the result to the nearest cent. The new code truncates the discount, which rounds the discount down and the price up. It then truncates the result again.\n- **Example:** `Apply(9.99m, 15m)` has a discount of 1.4985.\n  - Before: 9.99 − 1.4985 = 8.4915, which rounds to **8.49**.\n  - After: the discount truncates to 1.49, so the price is 9.99 − 1.49 = **8.50**.\n- **Impact:** customers are systematically under-discounted by up to 1 cent per call. Line-level and invoice-level totals will no longer match values already stored or issued, or any other code that still uses the old rounding.\n- **Fix:** if the aim is to round the discount to cents first, keep a nearest-cent mode such as `AwayFromZero` for it. If truncation is intended, the commit or PR should say so.\n\n**Finding 2: Outer rounding is redundant or lossy** (confidence: medium)\n- **File and line:** `DiscountCalculator.cs:16-17`\n- **What goes wrong:** once the discount is rounded to 2 decimals, `amount - discount` only has more than 2 decimals if `amount` does. The outer `ToZero` round is then a no-op for 2-decimal amounts. For amounts with more decimals it truncates, which is a second rounding step.\n- **Impact:** the double rounding can produce results that differ from rounding once.\n\n**Finding 3: Negative inputs behave differently** (confidence: low)\n- **File and line:** `DiscountCalculator.cs:16-17`\n- **What goes wrong:** for negative amounts such as credit notes, `ToZero` and `AwayFromZero` round in opposite directions. Refund amounts would shift by a cent relative to the old behavior.\n- **Fix:** check this against the existing tests.\n\nI can only see this hunk, so I haven't checked callers or tests. No test changes are in the diff, and none of the rounding-boundary cases above appear to be covered.",
+    "ttft_ms": 6956,
+    "type": "result",
+    "duration_ms": 12489,
+    "uuid": "9a6776d7-908f-4a98-98dc-6d810931dcf2",
+    "ttft_stream_ms": 1246,
+    "time_to_request_ms": 44,
+    "first_content_frame_ms": 1247,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

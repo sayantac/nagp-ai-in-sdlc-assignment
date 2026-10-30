@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 3,
+  "case": "case-02",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:58:09Z",
+  "wall_seconds": 26.4,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 23497,
+    "stop_reason": "end_turn",
+    "session_id": "723cc68b-6627-442c-9fc2-98602d8eb8ca",
+    "total_cost_usd": 0.0199916,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 872,
+      "cache_read_input_tokens": 34756,
+      "output_tokens": 1302,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 872,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 458,
+          "cache_read_input_tokens": 17378,
+          "cache_creation_input_tokens": 872,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 872
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 1302,
+        "cacheReadInputTokens": 34756,
+        "cacheCreationInputTokens": 872,
+        "webSearchRequests": 0,
+        "costUSD": 0.0199916,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 2,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I reported three findings.\n\n1. **SQL injection via `customer`** (`InvoicesController.cs:28`, high confidence). The value goes straight into the SQL string. A request like `?customer=' OR 1=1 --` returns every invoice, and a `UNION` or stacked statement could leak or destroy data. Use a parameterized query instead, and put the `%` wildcards in the parameter value.\n\n2. **SQL injection via `status`** (`InvoicesController.cs:32`, high confidence). It has the same flaw. `status=' OR '1'='1` gives `AND Status = '' OR '1'='1'`, which matches every row regardless of the customer filter. Parameterize this value too.\n\n3. **Smaller issues I couldn't fully confirm** (`InvoicesController.cs:25`, medium to low confidence):\n   - **Missing `customer`:** with nullable reference types on, it returns a 400. With them off, `customer` is null and the query becomes `LIKE '%%'`, which returns all invoices.\n   - **`_queries` field:** it doesn't appear in the diff. If the controller doesn't declare and inject it, the code won't compile. I can't see the rest of the file, so I can't tell.\n   - **Authorization:** no `[Authorize]` or tenant scoping is visible. If the base class doesn't enforce it, any caller can search every customer's invoices.",
+    "ttft_ms": 16210,
+    "type": "result",
+    "duration_ms": 23560,
+    "uuid": "22f86b60-9b75-4d4f-b753-13b46fdc700a",
+    "ttft_stream_ms": 10588,
+    "time_to_request_ms": 46,
+    "first_content_frame_ms": 10588,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

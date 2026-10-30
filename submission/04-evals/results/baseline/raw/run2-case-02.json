@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 2,
+  "case": "case-02",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:55:15Z",
+  "wall_seconds": 18.2,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 16633,
+    "stop_reason": "end_turn",
+    "session_id": "b67957f2-6e05-4e12-b4e6-f363746bcf49",
+    "total_cost_usd": 0.06768880000000001,
+    "usage": {
+      "input_tokens": 4,
+      "cache_creation_input_tokens": 11858,
+      "cache_read_input_tokens": 24088,
+      "output_tokens": 1784,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 11858,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 629,
+          "cache_read_input_tokens": 17378,
+          "cache_creation_input_tokens": 1190,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 1190
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 4,
+        "outputTokens": 1784,
+        "cacheReadInputTokens": 24088,
+        "cacheCreationInputTokens": 11858,
+        "webSearchRequests": 0,
+        "costUSD": 0.06768880000000001,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 2,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two confirmed SQL injection flaws and two plausible secondary issues, all in `InvoicesController.cs`. I only had the diff, so none of this was run.\n\n1. **Line 28, SQL injection via `customer` (confirmed, about 99% confident).** The value is interpolated straight into the SQL string. A request like `customer=' OR 1=1; DROP TABLE Invoices;--` reads or destroys data. Use a parameterized query, binding `@customer` with the `%` wildcards added to the parameter value.\n\n2. **Line 32, SQL injection via `status` (confirmed, about 99% confident).** The value is concatenated the same way. `status=' OR '1'='1` produces `AND Status = '' OR '1'='1'`. Because AND binds tighter than OR, that returns every row. UNION-based exfiltration also works. Bind it as a parameter, or check it against an allow-list of statuses.\n\n3. **Line 26, possible null `customer` and an unseen `_queries` (plausible, about 50% for the null case).**\n   - `customer` is a non-nullable `string` with no `[Required]` or empty check. If it binds as null, it becomes `LIKE '%%'` and returns every invoice.\n   - `_queries` doesn't appear in the diff. If its field and constructor injection weren't added elsewhere in the PR, the file won't compile. I'm less sure of this one because I can't see the rest of the file.\n\n4. **Line 25, no limit or visible authorization, and it skips the repository layer (plausible, about 40%).** The endpoint returns `SELECT *` with no paging or row cap. If the controller has no `[Authorize]`, a caller can dump all invoices with a broad search such as an empty `customer`. `SELECT *` may also expose columns that the repository's mapping normally hides. Authorization may be applied on `ApiControllerBase`, so check that first.",
+    "ttft_ms": 11447,
+    "type": "result",
+    "duration_ms": 16692,
+    "uuid": "566d09b8-3d7c-44a3-9b55-b49224d5df47",
+    "ttft_stream_ms": 3396,
+    "time_to_request_ms": 45,
+    "first_content_frame_ms": 3397,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

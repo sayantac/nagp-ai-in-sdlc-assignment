@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 3,
+  "case": "case-03",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:58:35Z",
+  "wall_seconds": 14.1,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 12575,
+    "stop_reason": "end_turn",
+    "session_id": "3a318b95-00b2-488d-a47b-3ec503bb92f1",
+    "total_cost_usd": 0.0147142,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 17302,
+      "output_tokens": 1298,
+      "output_tokens_details": {
+        "thinking_tokens": 573
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1298,
+          "cache_read_input_tokens": 17302,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1298,
+        "cacheReadInputTokens": 17302,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0147142,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 573,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found two defects, both in the one changed expression at `backend/src/InvoiceApp.Domain/DiscountCalculator.cs:15-16`. I only had the diff, with no tests or callers.\n\n**1. The discount is truncated, so the customer pays more than before (confidence: high)**\n- **What goes wrong:** `Math.Round(discount, 2, MidpointRounding.ToZero)` truncates the discount instead of rounding it to nearest. The discount is always rounded in the seller's favor, by up to 0.00999.\n- **Example:** `Apply(19.99m, 15m)`:\n  - Before, the discount was 2.9985 and the result was `Round(16.9915)`, which is 16.99.\n  - Now the discount becomes 2.99 and the result is 17.00.\n- **Impact:** Totals change by a cent on many inputs. That can break existing tests and previously issued invoices, and it can mean customers are overcharged against the advertised percentage.\n- **Check first:** I can't tell from the diff whether this is intended. If it is, nothing in the diff says why.\n\n**2. The two truncations round in opposite directions (confidence: medium)**\n- **What goes wrong:** The inner truncation favors the seller. The outer `Math.Round(amount - ..., 2, ToZero)` truncates the final price, which favors the customer whenever `amount` has more than 2 decimal places. That can happen with unit price × quantity or tax-derived amounts.\n- **Example:** If `amount` is 10.005m and the discount is 0, the result is now 10.00. It was 10.01 before, because the old mode was `AwayFromZero`.\n- **Impact:** For amounts with 2 decimals or fewer, the outer round does nothing. For longer amounts, it drops fractions of a cent, so line totals may no longer sum to the invoice total.\n- **Fix:** Pick one rounding policy. If the only goal is a consistent cent value, restore the original single `Math.Round(amount - discount, 2, MidpointRounding.AwayFromZero)`.\n\nI didn't flag the unvalidated `discountPercent` (negative or over 100). It was already unvalidated before this change.",
+    "ttft_ms": 7144,
+    "type": "result",
+    "duration_ms": 12628,
+    "uuid": "c883bc17-97b7-4599-b300-473a3aa993bf",
+    "ttft_stream_ms": 2466,
+    "time_to_request_ms": 49,
+    "first_content_frame_ms": 2467,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

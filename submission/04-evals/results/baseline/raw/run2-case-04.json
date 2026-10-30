@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 2,
+  "case": "case-04",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:55:49Z",
+  "wall_seconds": 9.6,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 7571,
+    "stop_reason": "end_turn",
+    "session_id": "d5c36759-66be-49d1-ad26-96055c6d47c9",
+    "total_cost_usd": 0.007454199999999999,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 17702,
+      "output_tokens": 568,
+      "output_tokens_details": {
+        "thinking_tokens": 293
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 568,
+          "cache_read_input_tokens": 17702,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 568,
+        "cacheReadInputTokens": 17702,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.007454199999999999,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 293,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff.\n\nIt is a pure rename of `_repository` to `_invoices`, plus the matching constructor parameter. Every use in the visible hunks is updated: the field, the constructor assignment, the three `Update` calls and `GetById` in `Find`. No logic, ordering or signature changes, and the constructor parameter name changes only matter for callers that pass it by name.\n\nI can only see the diff, not the full file, so I can't rule out a leftover `_repository` reference in lines the hunks don't cover. If one existed, it would be a compile error, so the build would catch it. Confidence that the diff is behavior-neutral: high.\n\nThe one thing worth checking outside the diff is whether any caller constructs `ApprovalService` with a named argument (`repository: ...`). That would also fail to compile, so it would surface immediately.",
+    "ttft_ms": 5540,
+    "type": "result",
+    "duration_ms": 7764,
+    "uuid": "9a07ff15-805c-46cd-b133-43dc0f351e81",
+    "ttft_stream_ms": 2535,
+    "time_to_request_ms": 193,
+    "first_content_frame_ms": 2535,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

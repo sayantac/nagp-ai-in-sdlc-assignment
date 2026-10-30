@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 2,
+  "case": "case-06",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:56:11Z",
+  "wall_seconds": 13.3,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 11357,
+    "stop_reason": "end_turn",
+    "session_id": "5cdd2f00-8232-41d0-8b4d-95506f1b2e6d",
+    "total_cost_usd": 0.0145006,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 17666,
+      "output_tokens": 1273,
+      "output_tokens_details": {
+        "thinking_tokens": 534
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 1273,
+          "cache_read_input_tokens": 17666,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 1273,
+        "cacheReadInputTokens": 17666,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.0145006,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 534,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff that I can confirm. It only adds three tests, and the diff doesn't include `ApprovalService`, `FakeInvoiceRepository` or `Pending(...)`. This working directory isn't the repo, so I couldn't check the tests against the source.\n\nThese are the assumptions that could make the tests fail. All of them are low confidence.\n\n- **`ApprovalServiceTests.cs:68` (`Reject_WithWhitespaceReason_Throws`), about 25% confidence of a problem:** `Assert.Throws<ArgumentException>` matches the exact type only. A service that throws `ArgumentNullException`, `InvalidOperationException` or a custom validation exception for a blank reason will fail this test. It will also fail if the service checks only `string.IsNullOrEmpty` and not `IsNullOrWhiteSpace`. Failing in that case would be correct, because it exposes a real gap.\n- **`ApprovalServiceTests.cs:85` (`Approve_RecordsTheApproverAndTime`), about 20% confidence of a problem:** The range check compares `DecidedAt` with `DateTime.UtcNow`. If the service stamps `DateTime.Now`, or a `DateTimeKind.Local` value, the test fails or becomes timezone-dependent. If the service uses an injected clock or `TimeProvider`, the test should use it instead of the real clock. The check is inclusive at both ends, so clock resolution isn't a problem.\n- **`ApprovalServiceTests.cs:95` (`Approve_UnknownInvoice_Throws`), about 20% confidence of a problem:** This needs the service or `FakeInvoiceRepository.Get` to throw exactly `KeyNotFoundException`. If the repository returns null and the service throws something else, such as `InvalidOperationException` or `ArgumentException`, the test fails.\n- **Coverage gap, about 30% confidence that it matters:** The whitespace-reason test doesn't check that the invoice is still `Pending` after the throw. A service that mutates the status before validating would pass the test anyway.\n\nIf you give me the service source, or run `dotnet test`, I can turn these into definite findings or rule them out.",
+    "ttft_ms": 5892,
+    "type": "result",
+    "duration_ms": 11420,
+    "uuid": "0659ee5d-c65d-417c-9aed-eda9ed5234dc",
+    "ttft_stream_ms": 1801,
+    "time_to_request_ms": 57,
+    "first_content_frame_ms": 1801,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

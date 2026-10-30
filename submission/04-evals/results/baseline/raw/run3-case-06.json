@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 3,
+  "case": "case-06",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:59:20Z",
+  "wall_seconds": 11.1,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 9004,
+    "stop_reason": "end_turn",
+    "session_id": "3a79b8cd-c12b-4140-8376-ce38bb89206e",
+    "total_cost_usd": 0.010440600000000001,
+    "usage": {
+      "input_tokens": 2,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 17666,
+      "output_tokens": 867,
+      "output_tokens_details": {
+        "thinking_tokens": 506
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 0,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 867,
+          "cache_read_input_tokens": 17666,
+          "cache_creation_input_tokens": 0,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 0
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 2,
+        "outputTokens": 867,
+        "cacheReadInputTokens": 17666,
+        "cacheCreationInputTokens": 0,
+        "webSearchRequests": 0,
+        "costUSD": 0.010440600000000001,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 506,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 1,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I found no defects in this diff.\n\nThe diff only adds three tests, and each one is consistent with the others and with the existing `Reject` test's setup. They don't change production code.\n\nI couldn't see `ApprovalService`, `FakeInvoiceRepository` or the `Pending` helper, so I couldn't check these assumptions:\n\n- **Exact exception types:** `Assert.Throws<T>` requires the exact type, not a subclass. The whitespace test fails if the service throws `ArgumentNullException` or a custom exception instead of `ArgumentException`. The unknown-invoice test fails if the service throws `InvalidOperationException` instead of `KeyNotFoundException`. Confidence that this is a problem: low.\n- **Clock source:** `Approve_RecordsTheApproverAndTime` assumes the service stamps `DecidedAt` with `DateTime.UtcNow`. If it uses `DateTime.Now`, the `InRange` check fails in any timezone ahead of UTC. Confidence that this is a problem: low.\n\nRunning the new tests against the real service would settle both.",
+    "ttft_ms": 6607,
+    "type": "result",
+    "duration_ms": 9160,
+    "uuid": "dc3d6b25-c647-4659-8479-03c2dc3c68af",
+    "ttft_stream_ms": 2993,
+    "time_to_request_ms": 152,
+    "first_content_frame_ms": 2993,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}

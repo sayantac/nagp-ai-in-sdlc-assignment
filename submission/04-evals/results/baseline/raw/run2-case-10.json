@@ -1,0 +1,111 @@
+{
+  "label": "baseline",
+  "run": 2,
+  "case": "case-10",
+  "context": "none",
+  "model_requested": "claude-sonnet-5-5",
+  "prompt_version": "v1",
+  "started": "2026-10-30T12:57:05Z",
+  "wall_seconds": 25.6,
+  "exit_code": 0,
+  "cwd_mode": "none",
+  "output": {
+    "duration_api_ms": 23813,
+    "stop_reason": "end_turn",
+    "session_id": "7bad427b-5f66-4aea-b4b3-fcb681350f3f",
+    "total_cost_usd": 0.0371202,
+    "usage": {
+      "input_tokens": 6,
+      "cache_creation_input_tokens": 2127,
+      "cache_read_input_tokens": 53202,
+      "output_tokens": 2328,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "server_tool_use": {
+        "web_search_requests": 0,
+        "web_fetch_requests": 0
+      },
+      "service_tier": "standard",
+      "cache_creation": {
+        "ephemeral_1h_input_tokens": 2127,
+        "ephemeral_5m_input_tokens": 0
+      },
+      "inference_geo": "global",
+      "iterations": [
+        {
+          "input_tokens": 2,
+          "output_tokens": 458,
+          "cache_read_input_tokens": 18518,
+          "cache_creation_input_tokens": 951,
+          "cache_creation": {
+            "ephemeral_5m_input_tokens": 0,
+            "ephemeral_1h_input_tokens": 951
+          },
+          "type": "message"
+        }
+      ],
+      "speed": "standard",
+      "fallback_credit": null
+    },
+    "modelUsage": {
+      "claude-sonnet-5-5": {
+        "inputTokens": 6,
+        "outputTokens": 2328,
+        "cacheReadInputTokens": 53202,
+        "cacheCreationInputTokens": 2127,
+        "webSearchRequests": 0,
+        "costUSD": 0.0371202,
+        "contextWindow": 1000000,
+        "maxOutputTokens": 128000,
+        "thinkingTokens": 0,
+        "canonicalModel": "claude-sonnet-5-5",
+        "provider": "firstParty",
+        "costBasis": "list"
+      }
+    },
+    "permission_denials": [],
+    "terminal_reason": "completed",
+    "fast_mode_state": "off",
+    "fast_mode_disabled_reason": "sdk_opt_in_required",
+    "subagent_stats": {
+      "spawned": 0,
+      "requested": {
+        "background": 0,
+        "foreground": 0,
+        "unset": 0
+      },
+      "started_in_background": 0,
+      "max_depth": 0,
+      "spawned_by_subagents": 0,
+      "completed": 0,
+      "failed": 0,
+      "killed": {
+        "parent": 0,
+        "user": 0,
+        "system": 0
+      },
+      "refused": {
+        "depth_limit": 0,
+        "concurrency_limit": 0,
+        "budget": 0
+      },
+      "by_type": {}
+    },
+    "safety_stops": 0,
+    "is_error": false,
+    "num_turns": 3,
+    "subtype": "success",
+    "api_error_status": null,
+    "result": "I reported 3 findings on `ApiControllerBase.cs`, all at the new `catch (Exception)` block (line 30). I only had the diff, so I haven't read the rest of the file or the callers.\n\n1. **Any unhandled exception returns 200 \"completed\"** (confidence ~95%). A `NullReferenceException`, `DbUpdateException`, `SqlException` or timeout now gives the client `200 {\"status\":\"completed\"}`. The client thinks an invoice was saved or paid when it wasn't. The exception is also never logged, and the exception-handling middleware and 5xx alerting never see it. This catch should be removed so unexpected errors reach the global handler as 500s. If you want a local fallback, log the exception and return a 500.\n\n2. **Cancellation is reported as success** (confidence ~80%). `OperationCanceledException` and `TaskCanceledException` are caught too. A request that was aborted partway still returns 200. This matters only if actions pass cancellation tokens or run async code through this wrapper.\n\n3. **Fallback payload has a different shape from a normal success** (confidence ~60%). A normal success returns the typed result from `Ok(action())`. The fallback returns `{ status = \"completed\" }`. A client that expects an `InvoiceDto` would deserialize it into blank or default fields and show no error. This is secondary to finding 1 and depends on the client code.",
+    "ttft_ms": 10032,
+    "type": "result",
+    "duration_ms": 23916,
+    "uuid": "4db23d7e-9faf-444d-bfeb-7c5c95852837",
+    "ttft_stream_ms": 3714,
+    "time_to_request_ms": 75,
+    "first_content_frame_ms": 3714,
+    "queued_turn_count": 0,
+    "result_index": 0
+  }
+}
