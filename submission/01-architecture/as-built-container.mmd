@@ -1,0 +1,46 @@
+flowchart LR
+  A1["A1 Browser user"]
+  subgraph C1["C1 API host (ASP.NET Core, one process)"]
+    C2["C2 Static web UI"]
+    C14["C14 UI script app.js"]
+    C3["C3 SessionAuthMiddleware"]
+    C4["C4 SessionStore (in-memory)"]
+    C5["C5 RequireRole filter"]
+    C6["C6 AuthController"]
+    C7["C7 InvoicesController"]
+    C8["C8 ApprovalsController"]
+    C9["C9 ApiControllerBase"]
+    C13["C13 Demo user config"]
+    C10["C10 ApprovalService (Domain)"]
+    C11["C11 IInvoiceRepository (Domain)"]
+    C12["C12 InMemoryInvoiceRepository"]
+    C15["C15 Invoice entity (Status, DecidedBy, DecidedAt, DecisionNote)"]
+    C16["C16 InvoiceStatus: Draft, PendingApproval, Approved, Rejected"]
+    C17["C17 appsettings.json Users: demo.approver is Approver, demo.admin is Admin"]
+    C18["C18 DemoUser (Username, Password, Role)"]
+    C19["C19 UserSession (Username, Role)"]
+    C20["C20 index.html"]
+  end
+  A1 -->|"E1: loads static page"| C2
+  C14 -->|"E2: fetch /api with Bearer token"| C1
+  C1 -->|"E3: middleware pipeline"| C3
+  C3 -->|"E4: looks up token"| C4
+  C3 -->|"E5: session in HttpContext.Items"| C5
+  C1 -->|"E6: MapControllers"| C6 & C7 & C8
+  C6 -->|"E7: credential match"| C13
+  C6 -->|"E8: Create / Remove session"| C4
+  C7 & C8 -->|"E9: injected ApprovalService"| C10
+  C7 -->|"E10: direct repository use"| C11
+  C7 & C8 -->|"E11: inherit and call Handle"| C9
+  C10 -->|"E12: GetById / Update"| C11
+  C11 -->|"E13: DI singleton"| C12
+  C1 -->|"E14: DI scoped"| C10
+  C13 -->|"E15: root configuration binds Users"| C17
+  C13 -->|"E16: holds list of DemoUser"| C18
+  C6 -->|"E17: builds UserSession, role copied from DemoUser"| C19
+  C5 -->|"E18: reads session role"| C19
+  C10 -->|"E19: sets status and decision fields"| C15
+  C15 -->|"E20: Status typed"| C16
+  C12 -->|"E21: holds invoices"| C15
+  C2 -->|"E22: serves page"| C20
+  C20 -->|"E23: script include"| C14

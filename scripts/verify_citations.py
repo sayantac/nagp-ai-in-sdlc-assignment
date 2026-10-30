@@ -20,6 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 ARCH = ROOT / "submission" / "01-architecture"
 ID_PATTERN = re.compile(r"\b([CAES]\d{1,3})\b")
+LINE_TOLERANCE = 3
 
 
 def parse_citations(path):
@@ -84,9 +85,24 @@ def main():
             continue
         if symbol and symbol not in ("-", "—", "n/a"):
             text = target.read_text(encoding="utf-8", errors="replace") if target.is_file() else ""
-            for part in re.split(r"[^\w]+", symbol):
-                if part and not re.search(rf"\b{re.escape(part)}\b", text):
+            parts = [part for part in re.split(r"[^\w]+", symbol) if part]
+            missing = False
+            for part in parts:
+                if not re.search(rf"\b{re.escape(part)}\b", text):
                     failures.append(f"{row['id']}: symbol part '{part}' not found in {path_text}")
+                    missing = True
+            line_numbers = [int(number) for number in re.findall(r"\d+", row.get("line", ""))]
+            if line_numbers and parts and not missing:
+                first, last = min(line_numbers), max(line_numbers)
+                source_lines = text.splitlines()
+                found_at = {part: [number for number, source in enumerate(source_lines, 1)
+                                   if re.search(rf"\b{re.escape(part)}\b", source)] for part in parts}
+                if not any(first - LINE_TOLERANCE <= number <= last + LINE_TOLERANCE
+                           for numbers in found_at.values() for number in numbers):
+                    actual = "; ".join(f"'{part}' at line(s) {', '.join(map(str, numbers[:8]))}"
+                                       for part, numbers in found_at.items())
+                    failures.append(f"{row['id']}: no symbol part within +/-{LINE_TOLERANCE} lines of "
+                                    f"{row['line']} in {path_text}; found {actual}")
         if row["section"] == "as-built" and row["id"] not in used:
             failures.append(f"{row['id']}: cited but not used in any as-built diagram")
         lines.append(f"ok-checked {row['id']:5} {path_text} :: {symbol}")
