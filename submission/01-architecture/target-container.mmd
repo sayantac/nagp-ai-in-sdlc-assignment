@@ -32,8 +32,8 @@ flowchart LR
   C23["C23 Audit events table, INSERT-only (NEW)"]:::planned
   C24["C24 Outbox table, one row per invoice, states Pending, Submitting, Submitted, Failed, InDoubt (NEW)"]:::planned
   C30["C30 Nightly reconciliation, follow-up not go-live (NEW)"]:::planned
-  LGSOLID["Legend: solid border and solid arrow = exists in code today"]
-  LGDASH["Legend: dashed border and dashed arrow = planned, not built (NEW)"]:::planned
+  LGSOLID["Legend: normal box and solid arrow = exists in code today"]
+  LGDASH["Legend: amber box, dashed border and dashed arrow = planned, not built (NEW)"]:::planned
   A1 -->|"E1: loads static page"| C2
   C14 -->|"E2: fetch /api with Bearer token"| C1
   C1 -->|"E3: middleware pipeline"| C3
@@ -69,4 +69,4 @@ flowchart LR
   C25 -.->|"E33: raises"| C29
   C30 -.->|"E34: compares with PayEx"| A2
   C30 -.->|"E35: reads rows, skips in flight"| C22
-  classDef planned stroke-dasharray: 5 5
+  classDef planned fill:#fff3cd,stroke:#d97706,stroke-width:3px,stroke-dasharray:6 4,color:#000
