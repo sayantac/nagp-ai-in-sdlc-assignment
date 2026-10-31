@@ -7,7 +7,7 @@ Follows `ops/evals/README.md`.
 | Harness | `scripts/run_evals.py` (headless `claude -p`, one fresh session per case) |
 | Model (identical in all runs) | `claude-sonnet-5-5` |
 | Prompt | `prompts/review-v1.md`, verbatim from `ops/evals/README.md` |
-| Tools | All disallowed (`--disallowedTools ...`); no MCP servers (`--strict-mcp-config`) |
+| Tools | A deny-list of 14 tools (Bash, Edit, Write, MultiEdit, Read, Glob, Grep, LS, WebFetch, WebSearch, Task, NotebookEdit, NotebookRead, TodoWrite) via --disallowedTools; no MCP servers (--strict-mcp-config). Tools not named stay available. |
 | Context in the baseline | None: run from an empty temp directory; `~/.claude/CLAUDE.md` empty or moved aside |
 | Changed variable | Context file: the same harness run from the repo root, so `CLAUDE.md` → `AGENTS.md` loads. Nothing else changes. |
 | Runs | 3 per label, 12 cases each |

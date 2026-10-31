@@ -13,6 +13,8 @@ The goal is traceability: what the AI did, which capabilities it used, and how a
 
 Commits carry an `AI-Log-Id:` trailer (via `.git/hooks/prepare-commit-msg`) plus Claude Code's `Co-Authored-By` trailer, linking commits to log entries.
 
+Auto entries take their stage from the git branch. Tasks 1 (target), 3, 4 and 5a were done on the task-2-adr branch, so the auto stage counts over-count task-2-adr; curated entries carry the correct stage.
+
 ## Field mapping for Claude Code
 
 | Trainer field | Source |

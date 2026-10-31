@@ -34,7 +34,6 @@ Other agent types available in this session that the table above does not cover:
 Caveats:
 
 - Scope limits such as "never open ops/" are prompt instructions. Nothing enforces them in tooling.
-- I read `eval-protocol.md` for the harness flags. I did not verify `scripts/run_evals.py` actually passes them.
 
 ## 3. Control demonstrated
 

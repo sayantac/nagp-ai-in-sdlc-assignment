@@ -11,5 +11,5 @@ Appended with `/agent-wrong <what happened>`. One entry per incident. Each entry
 ## 2026-10-30T11:42:56Z · task-1-architecture
 - What the agent said or did: Unscoped run drew ApprovalService -> DiscountCalculator from AGENTS.md wording; no such call exists in the code. Caught by comparing against citations.md.
 - How it was caught: Caught by comparing against citations.md.
-- Correction applied: pending
+- Correction applied: edge rejected; recorded in submission/01-architecture/inferred.md section 3.
 - Related log ids: 20261030T113741Z-56449d0c-p15, 20261030T114012Z-56449d0c-p16, 20261030T114252Z-56449d0c-p17
